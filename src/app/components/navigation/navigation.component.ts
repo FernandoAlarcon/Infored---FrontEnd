@@ -1,8 +1,17 @@
 import { Component, OnInit, HostBinding } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { AuthStateService } from '../../shared/auth-state.service';
-import { TokenService } from '../../shared/token.service'; 
 
+
+import { TokenService } from '../../shared/token.service'; 
+import { AuthService } from 'src/app/shared/auth.service';
+import { Permisos } from '../../services/services-data/user-permisos.service';
+import { AuthStateService } from '../../shared/auth-state.service';
+
+export class User {
+  id    : any = 0;
+  name  : String = '';
+  email : String = '';
+}
 
 @Component({
   //providers:[ClientesComponent],
@@ -11,7 +20,11 @@ import { TokenService } from '../../shared/token.service';
   styleUrls: ['./navigation.component.css'],
 })
 export class NavigationComponent implements OnInit {
-  isSignedIn: boolean | undefined;
+  
+  isSignedIn   : boolean | undefined;
+  UserProfile  : User    | undefined;
+  PermisosData : any = []; 
+  StateArrow   : any = false; 
 
  
   cliente = {
@@ -32,61 +45,48 @@ export class NavigationComponent implements OnInit {
   constructor(
               // private ClientFunction: ClientesComponent,
               // private clientesService: ClientesService,
-              private auth   : AuthStateService, 
-              public  token  : TokenService,
-              private router : Router,
-              private activatedRoute: ActivatedRoute) {}
+              public  token          : TokenService,
+              public  authService    : AuthService,
+              private auth           : AuthStateService, 
+              private router         : Router,
+              private permisos       : Permisos,
+              private activatedRoute : ActivatedRoute ) {}
 
   ngOnInit() {
+
     this.auth.userAuthState.subscribe(val => {
         this.isSignedIn = val;
-    });
- 
-      var navbarShrink = function () {
-          const navbarCollapsible = document.body.querySelector('#mainNav');
-          if (!navbarCollapsible) {
-              return;
-          }
-          
-      };
 
-      // Shrink the navbar 
-      navbarShrink();
- 
-      const navbarToggler = document.body.querySelector('.navbar-toggler');
-      const responsiveNavItems = [].slice.call(
-          document.querySelectorAll('#navbarResponsive .nav-link')
-      );
+    });
+
+    this.authService.profileUser().subscribe((data:any) => {
+      this.UserProfile = data; 
+      this.getPermisos();
+    })
+
         
-  } 
+  } /// FINAL ngOnInit
+
+  getPermisos():void{ 
+
+    this.permisos.GetPermisos(this.UserProfile?.id).subscribe(
+      (res:any) => {
+         if(res.status == true) {
+           this.PermisosData = res.permisos;
+           console.log({ DataPermisos : this.PermisosData})
+         }
+      }
+    )
+
+  }
+
 
    // Signout
-   signOut() {
+  signOut() {
     this.auth.setAuthState(false);
     this.token.removeToken();
     this.router.navigate(['login']);
   }
 
-  NuevosClientes(): void {
-
-    //delete this.cliente.id;
-    this.clientesService.saveClientes(this.cliente)
-    .subscribe(
-      (res: any) => {
-
-        //$('#NuevoCliente').modal('hide');
-        this.ClientFunction.ListClientes();
-        this.cliente.id        = '';
-        this.cliente.nombre    = '';
-        this.cliente.documento = '';
-        this.cliente.direccion = '';
-        this.cliente.telefono  = '';
-        this.cliente.email     = '';
-        this.cliente.estado    = '';
-        //this.router.navigate(['/clientes']);
-      },
-      (err: any) => console.log(err)
-    );
-  }
-
+  
 }

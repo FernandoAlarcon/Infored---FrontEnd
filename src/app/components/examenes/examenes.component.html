@@ -1,0 +1,370 @@
+<div class="">
+   <nav aria-label="breadcrumb" style="background-color: white;">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a routerLink="/home-index">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Examenes</li>
+      </ol>
+   </nav>
+   <div class="row">
+        <div class="col-md-12 row"> 
+           <div class="col-md-4"></div>
+           <div class="col-md-4">
+                <input type="text" class="form-control" placeholder="Busca tu examen"  [(ngModel)]="DataTipoExamen" (change)="GetTipoExamenes()" >
+           </div>
+           <div class="col-md-4"></div>
+        </div> 
+        <div class="col-md-12 row">
+           <div class="col-md-3"></div>
+           <div class="col-md-6"><br>
+               <div class="container-examenes card">
+                   <div *ngFor="let examen of TipoExamenes"  class="div-examen pointer" (click)="GetExamenes(examen.id, examen.nombre)" >
+                        {{ examen.nombre }}
+                   </div>
+               </div>
+           </div>
+           <div class="col-md-3"></div>
+
+        </div>
+   </div>
+   <div class="row" *ngIf="Acciones.length != 0" >
+      <div class="col-md-12 row">
+         <div class="col-md-2"></div>
+         <div class="col-md-8">
+            <h4>
+               {{ExamenSelected}}
+            </h4><br><br>
+            <ul class="nav nav-tabs md-tabs" id="myTab" role="tablist">
+               <ng-container *ngFor=" let Accion of Acciones "> 
+                  <li *ngIf="Accion.status == true"  class="nav-item pointer" role="presentation">
+                     <a class = "nav-link" 
+                             id    = "home-tab" 
+                             data-bs-toggle = "tab"  
+                             data-toggle="tab"
+                             [attr.data-target] = " '#'+ Accion.id "
+                             [attr.data-bs-target] = " '#'+ Accion.id "
+                             type  = "button"
+                             role  = "tab"  
+                             aria-selected="true"> {{Accion.accion}}
+                     </a>
+                     <div class="slide"></div>
+                  </li>
+               </ng-container>             
+                
+             </ul>
+         </div>
+         <div class="col-md-2"></div>
+      </div>
+      <div class="col-md-12 row">
+
+         <div class="col-md-1"></div>
+         <div class="col-md-10">
+            <div class="tab-content" id="myTabContent"><br><br><br>
+               <ng-container *ngFor=" let Accion of Acciones "> 
+
+                  <div *ngIf="Accion.id == 1" class="tab-pane fade show active" id={{Accion.id}} role="tabpanel" aria-labelledby="home-tab">
+                    <!-- <form (ngSubmit)="CrearExamen()" class="form" enctype="multipart/form-data" > -->
+                        <div style="text-align: center;" >
+                           <h3>
+                           Nuevo examen <b>{{ExamenSelected}} </b>
+                           </h3>
+                           <hr>
+                        </div>
+                        <div class="row">
+                         
+                             <div class="col-md-12 row">
+                                <div class="col-md-12">
+                                   <h4>
+                                      Fechas
+                                   </h4><br>
+                                </div>
+                                <div class="col-md-4">
+                                   <p>
+                                      Fecha Inicial
+                                   </p>
+                                   <input type="date" [(ngModel)]="SelectedData.fecha_inicio" class="form-control" id="start" name="trip-start" value={{myDateToday}} min="2001-01-01" max={{myDateToday}} >
+                                </div>
+                                <div class="col-md-4">
+                                   <p>
+                                      Fecha Final
+                                   </p>
+                                   <input type="date" [(ngModel)]="SelectedData.fecha_fin" class="form-control" id="start" name="trip-start" value={{myDateToday}} min="2001-01-01" max={{myDateToday}} >
+                                </div>
+                             </div>
+                             <div class="col-md-12 row">
+                                <div class="col-md-12"><br>
+                                   <hr>
+                                   <h4>
+                                      Personal
+                                   </h4><br>
+                                </div>
+                                <div class="col-md-12 row">
+                                   <div class="col-md-4">
+                                      <p>Tecnicos</p>
+                                      <!-- container-examenes card <input type="text"  [(ngModel)]="SearchTecnicos" (change)="GetTecnicos(59)" class="form-control" placeholder="Tecnico" > <br>  -->
+                                      <div class="">
+                                         <select [(ngModel)]="SelectedData.tecnico_id" class="form-control" id="">
+                                            <option selected *ngFor="let Tecnico of Tecnicos" value={{Tecnico.user_id}} > 
+                                                  {{ Tecnico.nombre }}  {{ Tecnico.apellidos }} 
+                                            </option>
+                                         </select>
+                                            <!-- <div *ngFor="let Tecnico of Tecnicos"  class="div-examen pointer"  (click)="ChoseData('1',Tecnico.User_id)" >
+                                               {{ Tecnico.nombre }}  {{ Tecnico.apellidos }}
+                                            </div> -->
+                                      </div>
+                                   </div>
+                                   <div class="col-md-4">
+                                      <p>Medicos</p>
+                                      <!-- <input type="text" [(ngModel)]="SearchPacientes" (change)="GetMedicos(58)" class="form-control" placeholder="Medicos" > <br> -->
+                                      <div class="">
+                                            <select [(ngModel)]="SelectedData.medico_id" class="form-control" id="">
+                                               <option selected *ngFor="let Medico of Medicos" value={{Medico.user_id}} >  {{ Medico.nombre }}  {{ Medico.apellidos }} </option>
+                                            </select>
+                                            <!-- <div *ngFor="let Medico of Medicos"  class="div-examen pointer"    (click)="ChoseData('2',Medico.User_id)" >
+                                               {{ Medico.nombre }}  {{ Medico.apellidos }}
+                                            </div> -->
+                                      </div>
+                                   </div>
+                                   <div class="col-md-4">
+                                      <p>Pacientes</p>
+                                      <!--class="container-examenes card" <input type="text" [(ngModel)]="SearchPacientes" (change)="GetPacientes(62)" class="form-control" placeholder="Pacientes" > <br> -->
+                                      <div>
+                                            <select [(ngModel)]="SelectedData.paciente_id" class="form-control" id="">
+                                               <option selected *ngFor="let Paciente of Pacientes" value={{Paciente.user_id}} > 
+                                                  {{ Paciente.nombre }}  {{ Paciente.apellidos }} 
+                                               </option>
+                                            </select>
+                                            <!-- <div *ngFor="let Paciente of Pacientes"  class="div-examen pointer" (click)="ChoseData('3',Paciente.User_id)" >
+                                               {{ Paciente.nombre }}  {{ Paciente.apellidos }}
+                                            </div> -->
+                                      </div>
+                                   </div> 
+                                </div>
+                             </div>
+                             <div class="col-md-12 row">
+                                <div class="col-md-12"><br>
+                                   <hr>
+                                   <h4>
+                                      Informacion Examen
+                                   </h4><br>
+                                </div>
+                                <div class="col-md-12 row">
+                                   <div class="col-md-4">
+                                      <p>Tipo de Examen</p>
+                                      <select name="" [(ngModel)]="SelectedData.id_tipo_examen" class="form-control" id="" disabled>
+                                         <option value={{idExamenSelected}} selected >{{ExamenSelected}}</option>
+                                      </select>
+                                   </div>
+                                   <div class="col-md-4">
+                                      <p>Clinica</p>
+                                      <select name="" [(ngModel)]="SelectedData.id_clinica" class="form-control" id="" >
+                                         <option *ngFor="let Clinica of Clinicas" value={{Clinica.id_clinica}} selected >
+                                            {{Clinica.NombreClinica}} <i style="color: gray;" > ({{Clinica.Ciudad}}) </i>
+                                         </option>
+                                      </select>
+                                   </div>
+                                   <div class="col-md-4">
+                                      <p>Costo Examen <label style="color: gray;" > - ({{SelectedData.costo_examen | currency}}) </label> </p>
+                                      <input class="form-control" [(ngModel)]="SelectedData.costo_examen" type="number" placeholder="Eje. $9999999" >
+                                   </div>
+  
+                                </div>
+                                <div class="col-md-12 row">
+                                   <div class="col-md-6"><br><br>
+                                      <p>Descripcion Examen</p>
+                                      <textarea name="" [(ngModel)]="SelectedData.descripcion" class="form-control" placeholder="Descripcion" cols="15" rows="3"></textarea>
+                                   </div>
+                                   <div class="col-md-3">
+                                       <!-- <div class="form-group">
+                                          <label for="file">Choose File</label>
+                                          <input type="file"
+                                                   id="file"
+                                                   (change)="handleFileInput($event.target.files)">
+                                       </div> -->
+
+                                   </div>
+                                   <div class="col-md-3"><br><br>
+                                       <button class="btn btn-danger" (click)="CrearExamen()" id="upload_book">Crear Examen</button>
+                                   </div>
+                                </div>
+                                <div class="col-md-12 row">
+                                    <div id="box4">
+                                       <!-- <mat-card>
+                                          <mat-card-header>
+                                                <mat-card-title>Lista de Archivos</mat-card-title>
+                                          </mat-card-header>
+                                          <mat-card id="box1">
+                                             <div mode="buffer" *ngFor="let progress of progressInfo">
+                                                <span>{{progress.fileName}}</span>
+                                                <span>{{progress.value}}%</span>
+                                                <div id="progressbar">
+                                                      <mat-progress-bar mode="buffer" value={{progress.value}}>
+                                                      </mat-progress-bar>
+                                                </div>
+                                             </div>
+                                          </mat-card> 
+                                       </mat-card> -->
+                                    </div>
+                                    <div id="wrap">
+
+                                       <!-- <mat-card id="box1">
+                                          <div mode="buffer" *ngFor="let progress of progressInfo">
+                                             <span>{{progress.fileName}}</span>
+                                             <span>{{progress.value}}%</span>
+                                             <div id="progressbar">
+                                                   <mat-progress-bar mode="buffer" value={{progress.value}}>
+                                                   </mat-progress-bar>
+                                             </div>
+                                          </div>
+                                       </mat-card> -->
+                                 
+                                       <div id="box2">
+                                          
+                                          <button id="selectButton" mat-raised-button (click)="fileInput.click()">Seleccionar imagen del Examen</button>
+                                          <input #fileInput type="file" hidden multiple (change)="selectFiles($event)" accept="image/jpeg" />
+                                          <span *ngIf="fileName">{{fileName}}</span>
+                                 
+                                          <!-- image/png, <button id="uploadButton" class="btn btn-success" mat-raised-button *ngIf="selectedFiles" [disabled]="!selectedFiles" (click)="uploadFiles()">
+                                             Subir Archivos
+                                          </button> -->
+                                       </div>
+                                 
+                                       <div id="box3">
+                                          <span>{{message}}</span>
+                                       </div>
+                                 
+                                 
+                                       
+                                 </div>  
+                                </div>
+                                
+                             </div>
+                          
+                       </div> 
+                    <!-- </form> -->
+                  </div> 
+                  <div *ngIf="Accion.id == 2" class="tab-pane fade " id={{Accion.id}} role="tabpanel" aria-labelledby="home-tab">
+                     <div style="text-align: center;" >
+                        <hr>
+                        <h3>
+                          Examenes <b>{{ExamenSelected}} </b><br>
+                        </h3> 
+                     </div>
+                     <div class="row">
+                        <div class="col-md-12 row">
+                           <div class="col-md-4"></div>
+                           <div class="col-md-4">
+                                 <input type="text" [(ngModel)]="SearchExamens" (keyup)="SearcExamenes()" class="form-control" placeholder="Buscar Examenes" ><br>
+                           </div>
+                           <div class="col-md-4"></div>
+                        </div>
+                        <div class="col-md-12 row ">
+
+                           <div *ngIf=" ExamenesGet.length == 0 && CharguerData == false " style=" text-align: center; height: 100px;" >
+                              <div class="loader"></div>
+                           </div>
+                           <div *ngIf=" ExamenesGet.length == 0 && CharguerData == true "  style=" text-align: center; height: 100px;" >
+                              <h3> No hay registros </h3>
+                           </div>
+                           <div *ngIf=" ExamenesGet.length != 0 && CharguerData == true "  class="table-responsive row" >
+                              <div class="table-responsive" style=" height: 500px; overflow: auto;" >
+                                 <table class="table">
+                                    <thead>
+                                      <tr>
+                                        <th scope="col">Fecha Inicial</th>
+                                        <th scope="col">Fecha Final</th>
+                                        <th scope="col">Examen</th>
+                                        <th scope="col">Clinica</th>
+                                        <th scope="col">Descripcion</th>
+                                        <th scope="col">Costo</th>
+                                        <th scope="col">Medico</th>
+                                        <th scope="col">Tecnico</th>
+                                        <th scope="col">Paciente</th>
+                                        <th scope="col">Documento</th>
+                                        <th scope="col">Email Paciente</th>
+                                        <th scope="col">Acciones</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>                                 
+                                      <tr *ngFor="let examen of ExamenesGet" >
+                                        <!-- <th scope="row">3</th> -->
+                                        <td> {{ examen.fecha_inicio    }} </td>
+                                        <td> {{ examen.fecha_fin       }} </td>
+                                        <td> {{ examen.examen          }} </td>
+                                        <td> {{ examen.clinica         }} </td>
+                                        <td> {{ examen.descripcion     }} </td>
+                                        <td> {{ examen.costo_examen    }} </td>
+                                        <td> {{ examen.medico          }} </td>
+                                        <td> {{ examen.tecnico         }} </td>
+                                        <td> {{ examen.paciente        }} </td>
+                                        <td> {{ examen.dni_paciente    }} </td>
+                                        <td> {{ examen.correo_paciente }} </td>
+                                        <td>
+                                          <button class="btn btn-danger" (click)="DownloadExam(examen)" >
+                                             <svg  width="16" height="16" fill="currentColor" class="bi bi-file-earmark-arrow-down-fill" viewBox="0 0 16 16">
+                                                <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zm-1 4v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 11.293V7.5a.5.5 0 0 1 1 0z"/>
+                                             </svg>
+                                          </button>
+                                        </td> 
+                                      </tr>
+                                    </tbody>
+                                 </table><br><br>
+                              </div>
+                              <br><br><br>
+                              <div class="pagination-box row" style=" width: 100%;" >
+                                 <div class="col-md-1" ></div>
+                         
+                                 <div class="col-md-3"  >
+                                    <svg *ngIf='pagination.current_page > 1' (click)="changePage(pagination.current_page - 1)"  width="25" height="25" fill="currentColor" class="pointer bi bi-arrow-left-circle-fill" viewBox="0 0 16 16">
+                                       <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/>
+                                    </svg>
+                                    <svg *ngIf='pagination.length == 0' style="color: grey;" width="25" height="25" fill="currentColor" class="bi bi-arrow-left-circle-fill" viewBox="0 0 16 16">
+                                       <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/>
+                                    </svg>
+                                 </div>
+                                 <div class="col-md-4" >
+                                    
+                                    Page {{ pagination.current_page }} <br>
+                                    <p style=" color: grey; " >
+                                       Total {{ pagination.last_page }}
+                                    </p>
+
+                                 </div>
+                                 <div class="col-md-3"  >
+                                   <svg *ngIf='pagination.current_page < pagination.last_page' (click)="changePage(pagination.current_page + 1)" width="25" height="25" fill="currentColor" class="pointer bi bi-arrow-right-circle-fill" viewBox="0 0 16 16">
+                                     <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"/>
+                                   </svg>
+                                 </div>
+                                 
+                                 <div class="col-md-1" ></div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div> 
+                  <div *ngIf="Accion.id == 3" class="tab-pane fade " id={{Accion.id}} role="tabpanel" aria-labelledby="home-tab">
+                     <div class="col-md-12">
+
+                     </div>
+                  </div>
+                  <div *ngIf="Accion.id == 4" class="tab-pane fade " id={{Accion.id}} role="tabpanel" aria-labelledby="home-tab">
+                     {{Accion.accion}}
+                  </div> 
+
+               </ng-container>
+            </div>
+         </div>
+         <div class="col-md-1"></div>
+         
+      </div> 
+   </div>
+   <div class="row" *ngIf="Acciones.length == 0" styles="text-align:center;" >
+      <div class="col-md-1"></div>  
+      <div class="col-md-10">
+         <h3>
+               No has escogido ningun examen
+         </h3>
+      </div>  
+      <div class="col-md-1"></div>  
+   </div>
+    
+</div>

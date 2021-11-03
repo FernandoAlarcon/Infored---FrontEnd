@@ -1,0 +1,111 @@
+.container-examenes{
+    overflow: auto;
+    height: 100px;
+    border: solid inherit 10px;
+}
+
+.div-examen{ 
+    background-color:#fff;
+    border-top: #DED7D7;
+}
+
+.div-examen:hover{ 
+    background-color: #DED7D7;
+}
+
+.pointer{
+    cursor: pointer;
+}
+
+
+.loader {
+    border: 10px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 10px solid black;
+    width: 40px;
+    height: 40px;
+    -webkit-animation: spin 2s linear infinite; /* Safari */
+    animation: spin 2s linear infinite;
+  }
+  
+  /* Safari */
+  @-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+
+  #wrap{
+    display: block;
+ }
+ 
+ #box1, #box2, #box3, #box4{
+     display: block;
+     width: 50%;
+     margin-left: auto;
+     margin-right: auto;
+     margin-top: 10px;
+     margin-bottom: 10px;
+     text-align: center;
+ }
+ 
+ #box1{
+     text-align: center;
+     border: 1px solid gray;
+     height: auto;
+     overflow: auto;
+ }
+ 
+ #progressbar{
+     text-align: center;
+     height: 20px;
+     padding: 10px;
+ }
+ 
+ #box1 span{
+     margin-left: 10px;
+ }
+ 
+ #box2 span{
+     margin-left: 10px;
+     margin-right: 10px;
+ }
+ 
+ #box2 #selectButton{
+     background-color: rgb(1, 145, 155);
+     color: white;
+ }
+ 
+ #box2 #uploadButton{
+     background-color: rgb(26, 26, 160);
+ }
+ 
+ #box3{
+     color: red;
+ }
+ 
+ #box4 ul{
+  list-style: none;
+ }
+ 
+ #box4 ul li{
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+ }
+ 
+ #box4 ul li a{
+  text-decoration: none;
+  color: white;
+  margin-right: 20px;
+ }
+
+  table {
+    width: 100%;
+    
+  }

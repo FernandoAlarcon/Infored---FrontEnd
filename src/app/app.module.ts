@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { APP_BASE_HREF } from '@angular/common';
+ 
+
 
 // COMPONENTES
 import { AppComponent } from './app.component';
@@ -23,6 +25,21 @@ import { NavigationComponent } from './components/navigation/navigation.componen
 import { HomeComponent } from './components/home/home.component';
 import { ProductsComponent } from './components/products/products.component';
 import { CategoryComponent } from './components/category/category.component';
+import { IndexHomeComponent } from './components/index-home/index-home.component';
+import { VerticalNavBarComponent } from './components/vertical-nav-bar/vertical-nav-bar.component';
+import { PermisosRolesComponent } from './components/permisos-roles/permisos-roles.component';
+import { ExamenesComponent } from './components/examenes/examenes.component';
+import { CitasComponent } from './components/citas/citas.component';
+import { FooterComponent } from './components/footer/footer.component';
+import { DiagnosticoComponent } from './components/diagnostico/diagnostico.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+// MATERIAL UI
+import {MatProgressBarModule} from '@angular/material/progress-bar';
+import {MatButtonModule} from '@angular/material/button';
+import {MatCardModule} from '@angular/material/card';
+import {MatIconModule} from '@angular/material/icon';
+import {MatGridListModule} from '@angular/material/grid-list';
 
 @NgModule({
   declarations: [
@@ -33,7 +50,14 @@ import { CategoryComponent } from './components/category/category.component';
     NavigationComponent,
     HomeComponent,
     ProductsComponent,
-    CategoryComponent
+    CategoryComponent,
+    IndexHomeComponent,
+    VerticalNavBarComponent,
+    PermisosRolesComponent,
+    ExamenesComponent,
+    CitasComponent,
+    FooterComponent,
+    DiagnosticoComponent
   ],
   imports: [
     HttpClientModule,
@@ -41,7 +65,12 @@ import { CategoryComponent } from './components/category/category.component';
     BrowserModule,
     ReactiveFormsModule,
     FormsModule,
-    MDBBootstrapModule.forRoot()
+    MDBBootstrapModule.forRoot(),
+    BrowserAnimationsModule,
+    MatProgressBarModule,
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule,
   ],
   providers: [
     {  

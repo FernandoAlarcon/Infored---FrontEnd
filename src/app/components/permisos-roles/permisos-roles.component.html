@@ -1,0 +1,119 @@
+<div>
+    <nav aria-label="breadcrumb" style="background-color: white;">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a routerLink="/home-index">Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Permisos Roles</li>
+        </ol>
+    </nav>
+    <div class="container">
+
+        <div class="col-md-12">
+            <div>
+                <h4>Roles</h4><hr>
+                <select class="form-control" [(ngModel)]="RollSelect" (change)="GetPermisosRoll()" > 
+                    <option *ngFor="let Rol of Roles" value={{Rol.id}} >{{Rol.name}}</option>
+                </select><br><br>
+            </div>
+            <div class="card" > 
+                <div class="card-body row"> 
+                   <div class="col-md-6">
+                        <div *ngIf="ModulosCome == true" >
+                            <p>
+                                Modulos
+                            </p>
+                            <div *ngFor="let Modulo of ModulosRoles" (click)="ChoseModulo(Modulo.id, Modulo.modulo)" class="form-check div-modulos form-switch pointer" title="Presiona {{Modulo.modulo}} para saber acciones">
+                                <input class="form-check-input" (change)='CreatePermiso(Modulo.id, Modulo.modulo)'  [value]="Modulo.id"  type="checkbox" id="flexSwitchCheckChecked" checked="{{Modulo.checked}}">
+                                <label class="form-check-label" for="flexSwitchCheckChecked">{{Modulo.modulo}} </label>
+                            </div>
+                        </div>
+                        <div *ngIf="ModulosCome == false" >
+                            <p>
+                                Escoje un roll
+                            </p>
+                        </div>
+                   </div>
+                   <div class="col-md-6">
+                        <p>
+                            Acciones - {{ RollSelectNameGet }} - {{ ModuloSelected }}
+                        </p>
+                        <div *ngIf="CharguerAccion == true" class="spinner-border" style="text-align: center; width: 100%;" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        <div *ngFor="let Accion of AccionesPermisos" class="form-check form-switch " >        
+                            <input *ngIf="Accion.disable == true" class="form-check-input"  [value]="Accion.id"  type="checkbox" id="flexSwitchCheckChecked" disabled="{{Accion.disable}}" checked="{{Accion.checked}}" >
+                            <input *ngIf="Accion.disable == false"  class="form-check-input" (change)='CreateAccion(Accion.id)'  [value]="Accion.id"  type="checkbox" id="flexSwitchCheckChecked" checked="{{Accion.checked}}" >
+                            <label class="form-check-label" for="flexSwitchCheckChecked">{{Accion.accion}} </label>
+                        </div>
+                   </div>
+                </div>
+            </div>
+            
+            <div *ngIf="AlertSucces == true" class="alert alert-success background-success">
+                <button type="button" class="close" (click)="CancelAlerts()" data-dismiss="alert" aria-label="Close">
+                    <i class="icofont icofont-close-line-circled text-white"></i>
+                </button>
+                <strong>Estado Actualizado!</strong> 
+            </div>
+            <div *ngIf="DangerSucces == true" class="alert alert-warning background-warning">
+                <button type="button" class="close" (click)="CancelAlerts()" data-dismiss="alert" aria-label="Close">
+                    <i class="icofont icofont-close-line-circled text-white"></i>
+                </button>
+                <strong>Algo no salio bien!</strong>
+            </div>
+        </div>
+        <div class="col-md-12">
+
+            <div class="usuarios-roll row" >
+               <div class="col-md-12">
+                    <h4> Usuarios Roll</h4><hr>
+
+                    <div *ngIf="UsersRoles.length == 0"  >
+                        <p>
+                            No hay usuarios con este el roll {{RollSelectNameGet}}
+                        </p>
+                    </div>
+               </div>
+
+                <div *ngIf="UsersRoles.length != 0" class="col-md-12 content-users" style=" height: 500px; width: 100%; overflow: auto;"  >
+                   <div class="row">
+                    <div *ngFor="let User of UsersRoles"  class="card-profile col-md-6" >
+                        <div class="firstinfo">
+                            <img src="https://randomuser.me/api/portraits/lego/6.jpg" alt="">
+                            <div class="profileinfo">
+                                <h1>
+                                    {{User.Username}}
+                                </h1>
+                                <h3>
+                                    {{User.Roll}}
+                                </h3> 
+                                <p>
+                                    {{User.descripcion}}
+                                </p>
+                                <div class="badgescard">
+
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+
+                    </div> 
+                   </div>                      
+                </div>
+                
+            </div>
+
+        </div>
+        
+    </div>    
+</div>
+
+<!-- <table class="table">
+    <thead>
+        <tr>
+          <th *ngFor="let Rol of Roles"  scope="col">{{Rol.name}}</th> 
+        </tr>
+    </thead> 
+    <tbody>
+        <tr></tr>    
+    </tbody>
+</table>   -->
