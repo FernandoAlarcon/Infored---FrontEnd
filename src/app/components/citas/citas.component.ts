@@ -1,4 +1,40 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Output, Renderer2, ViewChild, OnInit } from '@angular/core';
+import { AuthStateService }  from '../../shared/auth-state.service';
+
+import { TokenService }     from '../../shared/token.service';
+import { AuthService }      from 'src/app/shared/auth.service'; 
+import { Permisos }         from '../../services/services-data/user-permisos.service';
+import { ExamenesServices } from 'src/app/services/services-data/examenes.service';
+import { SeveralServices }  from 'src/app/services/services-data/several-services.service';
+import { Citas }            from 'src/app/services/services-data/citas.services';
+
+import * as moment from 'moment'; 
+import { CalendarOptions } from '@fullcalendar/angular';  
+import { async } from '@angular/core/testing';
+//import { MatCalendar } from '@angular/material';
+ 
+
+const colors: any = {
+  red: {
+    primary: '#ad2121',
+    secondary: '#FAE3E3',
+  },
+  blue: { 
+    primary: '#1e90ff',
+    secondary: '#D1E8FF',   
+  },
+  yellow: {
+    primary: '#e3bc08',
+    secondary: '#FDF1BA',
+  }, 
+};
+
+export class User {
+  id    : any = 0;
+  name  : String = '';
+  email : String = '';
+}
+
 
 @Component({
   selector: 'app-citas',
@@ -6,10 +42,269 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./citas.component.css']
 })
 export class CitasComponent implements OnInit {
+  //AfterViewInit
 
-  constructor() { }
+  /////////////////////////////////////////////////////////
+ 
+   //calendar: MatCalendar<moment.Moment>;
+ 
+  /////////////////////////////////////////////////////////
+  
+  isSignedIn   : boolean | undefined;
+  UserProfile  : User    | undefined;
+  PermisosData : any     = [];
 
-  ngOnInit(): void {
+  idExamenSelected : string = "";
+  ExamenSelected   : string = "";
+  
+  SearchExamens    : string = "";
+  DataTipoExamen   : string = "";
+  SearchMedicos    : string = "";
+  SearchPacientes  : string = "";
+  SearchTecnicos   : string = "";
+
+  ListExamenes     : any  = [];
+  AllCitas         : any  = [];
+
+
+  RollData     : any  = [];
+  Acciones     : any  = [];
+  ExamenesGet  : any  = [];
+
+  Tecnicos      : any  = [];
+  Medicos       : any  = [];
+  Pacientes     : any  = [];
+  Clinicas      : any  = [];
+  pagination    : any  = [];
+  myDateToday   : Date = new Date();
+  SelectedData  : any = {
+    fecha_inicio   : '',
+    fecha_fin      : '',
+    medico_id      : '',
+    tecnico_id     : '',
+    paciente_id    : '',
+    id_tipo_examen : '',
+    id_clinica     : '',
+    descripcion    : '',
+    costo_examen   : '0'
   }
+
+  
+  CharguerData  : boolean | undefined;
+
+  constructor(
+                public  token          : TokenService,
+                private permisos       : Permisos,
+                public  authService    : AuthService,
+                private auth           : AuthStateService,
+                private servicesExamen : ExamenesServices,
+                private services       : SeveralServices,
+                private renderer       : Renderer2,
+                private CitasService   : Citas
+              ) { }
+
+  async ngOnInit(){
+
+    await this.auth.userAuthState.subscribe(val => {
+        this.isSignedIn = val;
+    });
+
+    await this.authService.profileUser().subscribe(
+      async ( data:any ) => {
+       this.UserProfile = data; 
+       await this.GetPermisos();
+    });
+    
+  }
+  
+
+  async GetPermisos(){
+
+    await this.permisos.GetPermisos(this.UserProfile?.id).subscribe(
+      (res:any) => {
+         if(res.status == true) {
+           this.PermisosData = res.permisos;
+         }
+      }
+    )
+
+    await this.permisos.GetOwnRoll(this.UserProfile?.id,'OwnRollData').subscribe(
+      async (res : any) => {
+        if(res.status == true){
+          this.RollData = res.rollData;
+          await this.GetActions();
+
+        }
+      }
+    )
+
+  }/// FINAL GetPermisos
+
+  async GetActions() {
+    ////  SEGUNDO PARAMETRO ES EL ID DEL ROLL
+    await this.permisos.GetAcciones(this.RollData[0].IdRoll, '2').subscribe(
+      async (res : any) => {
+        console.log({data : res})
+        if(res.status == true){
+          this.Acciones = res.acciones;
+          await this.MappingActionsEvents();
+        }
+      }
+    )
+  }/// FINAL GetActions
+
+  async MappingActionsEvents(){
+
+    for (let index = 0; index < this.Acciones.length; index++) {
+
+      let elements = this.Acciones[index];
+
+      if ( elements.id == 1 && elements.status == true && elements.accion == "Crear" ) {
+        await this.CreateCita();
+        await this.ListTipoExamenes();
+      }else if ( elements.id == 2 && elements.status == true && elements.accion == "Listar" ){
+        await this.ListCitas();
+      }else if ( elements.id == 3 && elements.status == true && elements.accion == "Eliminar" ){
+
+      }
+
+    }
+
+  }//// FINAL MappingActionsEvents
+
+  CreateCita():void{
+
+    this.GetTecnicos('57');
+    this.GetMedicos('58');
+    this.GetPacientes('62');
+    this.GetClinicas();
+
+  }//// FINISH CreateCita
+
+  async SearcExamenes() {
+
+    this.ExamenesGet  = [];
+    this.CharguerData = false;
+
+      await this.servicesExamen.ListExamenes(this.idExamenSelected, this.SearchExamens, this.pagination.current_page).subscribe(
+        ( res : any ) => {
+
+            this.ExamenesGet  = res.examenes.data;
+            this.pagination   = res.pagination;
+            this.CharguerData = true;
+
+        }
+      )
+  }//// FINISH SearcExamenes
+
+  async GetExamenes(IdExamen : any, Examen:string) {
+
+    this.DataTipoExamen   = '';
+    this.ExamenSelected   = Examen;
+    this.idExamenSelected = IdExamen;
+    this.SelectedData.id_tipo_examen = this.idExamenSelected;
+
+    await this.GetActions();
+    await this.MappingActionsEvents();
+
+  }//// FINAL GetExamenes
+
+  async GetTecnicos( IdRoll : any ) {
+
+      await this.servicesExamen.GetPersonalRoll(IdRoll, this.SearchTecnicos).subscribe(
+        ( res : any ) => {
+          this.Tecnicos = res.personas;
+          this.SelectedData.tecnico_id = this.Tecnicos[0].user_id;
+        }
+      )//// FINISH GET-TECNICOS
+  }//// FINISH GetTecnicos
+
+  async GetMedicos( IdRoll : any ) {
+
+    await this.servicesExamen.GetPersonalRoll(IdRoll, this.SearchMedicos).subscribe(
+      ( res : any ) => {
+        this.Medicos = res.personas;
+        this.SelectedData.medico_id = this.Medicos[0].user_id;
+
+      }
+    ) //// FINISH GET-MEDICOS
+
+  }//// FINISH GetMedicos
+
+  async GetPacientes( IdRoll : any )  {
+
+    await this.servicesExamen.GetPersonalRoll(IdRoll, this.SearchPacientes).subscribe(
+      ( res : any ) => {
+        this.Pacientes                = res.personas;
+        this.SelectedData.paciente_id = this.Pacientes[0].user_id;
+
+      }
+    ) ///// FINISH GET-PACIENTES
+
+  }//// FINISH GetPacientes
+
+  async GetClinicas(){
+
+    await this.services.GetClinicas().subscribe(
+      (res : any) => {
+        this.Clinicas                = res.clinicas;
+        this.SelectedData.id_clinica = this.Clinicas[0].id_clinica;
+      }
+    )
+
+  }//// FINISH GetClinicas
+
+  async ListTipoExamenes(){
+    this.services.GetTipoExamenes('').subscribe(
+      ( res : any ) => {
+        this.ListExamenes                 = res.TipoExamenes;
+        this.SelectedData.id_tipo_examen  = this.ListExamenes[0].id
+      }
+    )
+  }
+
+  async CrearCitas() {
+
+    if (
+          this.SelectedData.fecha_inicio   != '' &&
+          this.SelectedData.fecha_fin      != '' &&
+          this.SelectedData.medico_id      != '' &&
+          this.SelectedData.tecnico_id     != '' &&
+          this.SelectedData.paciente_id    != '' &&
+          this.SelectedData.id_tipo_examen != '' &&
+          this.SelectedData.id_clinica     != '' &&
+          this.SelectedData.descripcion    != ''
+      ) {
+
+        await this.servicesExamen.CreateExamen(this.SelectedData).subscribe(
+          ( res : any ) => {
+            if(res.status == true){
+
+              this.SelectedData.fecha_inicio   = '';
+              this.SelectedData.fecha_fin      = '';
+              this.SelectedData.medico_id      = '';
+              this.SelectedData.tecnico_id     = '';
+              this.SelectedData.paciente_id    = '';
+              this.SelectedData.id_tipo_examen = this.idExamenSelected;
+              this.SelectedData.id_clinica     = '';
+              this.SelectedData.descripcion    = '';
+              this.SelectedData.costo_examen   = '0';
+
+            
+            }
+          }
+        )/// CreateCitas
+
+    }else{
+
+      console.log( this.SelectedData );
+      alert(' Hay campos obligatorios ');
+
+    }///
+
+
+  }//// FINISH CrearCitas
+
+  ListCitas(){}
 
 }

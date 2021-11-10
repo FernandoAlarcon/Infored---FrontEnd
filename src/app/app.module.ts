@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { APP_BASE_HREF } from '@angular/common';
+
  
 
 
@@ -34,6 +35,10 @@ import { FooterComponent } from './components/footer/footer.component';
 import { DiagnosticoComponent } from './components/diagnostico/diagnostico.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+// QUIL 
+import * as  Quill from 'ngx-quill'; 
+import { QuillModule } from 'ngx-quill'
+import QuillType from 'quill';  
 // MATERIAL UI
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatButtonModule} from '@angular/material/button';
@@ -41,9 +46,26 @@ import {MatCardModule} from '@angular/material/card';
 import {MatIconModule} from '@angular/material/icon';
 import {MatGridListModule} from '@angular/material/grid-list';
 
+
+/// CALENDAR 
+import { FullCalendarModule } from '@fullcalendar/angular'; // must go before plugins
+ 
+import dayGridPlugin          from '@fullcalendar/daygrid'; // a plugin!
+import interactionPlugin      from '@fullcalendar/interaction'; 
+//import resourceTimelinePlugin from '@fullcalendar/resource-timeline'; // a plugin!
+
+import Counter from './counter';
+import { CalendarioComponent } from './components/citas/calendario/calendario.component';
+ 
+
+FullCalendarModule.registerPlugins([ // register FullCalendar plugins
+  dayGridPlugin,
+  interactionPlugin
+]);
+
 @NgModule({
   declarations: [
-    AppComponent,
+    AppComponent,  
     SigninComponent,
     SignupComponent,
     UserProfileComponent,
@@ -57,7 +79,8 @@ import {MatGridListModule} from '@angular/material/grid-list';
     ExamenesComponent,
     CitasComponent,
     FooterComponent,
-    DiagnosticoComponent
+    DiagnosticoComponent,
+    CalendarioComponent
   ],
   imports: [
     HttpClientModule,
@@ -71,6 +94,20 @@ import {MatGridListModule} from '@angular/material/grid-list';
     MatButtonModule,
     MatCardModule,
     MatIconModule,
+
+    
+    QuillModule.forRoot({
+      customModules: [{
+        implementation: Counter,
+        path: 'modules/counter'
+      }],
+      customOptions: [{
+        import: 'formats/font',
+        whitelist: ['mirza', 'roboto', 'aref', 'serif', 'sansserif', 'monospace']
+      }]
+    }),
+    FullCalendarModule, 
+    
   ],
   providers: [
     {  

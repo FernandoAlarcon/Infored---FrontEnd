@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 // Componentes
-import { SigninComponent }   from './components/signin/signin.component'; 
+import { SigninComponent }   from './components/signin/signin.component';
 import { SignupComponent }   from './components/signup/signup.component';
 import { HomeComponent }     from './components/home/home.component';
 import { ProductsComponent } from './components/products/products.component';
@@ -19,23 +19,23 @@ import { PermisosRolesComponent } from './components/permisos-roles/permisos-rol
 import { IndexHomeComponent } from './components/index-home/index-home.component';
 
 const routes: Routes = [
+
   { path: '',           redirectTo: '/home', pathMatch: 'full' },
   { path: '*',          redirectTo: '/home', pathMatch: 'full' },
-  { path: 'products',   redirectTo: '/home-index', pathMatch: 'full' }, 
- 
+  { path: 'products',   redirectTo: '/home-index', pathMatch: 'full' },
+
   { path: 'home-index', component: IndexHomeComponent },
   { path: 'home',       component: HomeComponent },
   { path: 'profile',    component: UserProfileComponent },
-  { path: 'register',   component: SignupComponent }, 
+  { path: 'register',   component: SignupComponent },
   { path: 'login',      component: SigninComponent },
   { path: 'categories', component: CategoryComponent },
-  
-  
+
+
   { path: 'modulos-permisos', component: PermisosRolesComponent },
   { path: 'examenes',         component: ExamenesComponent },
-  { path: 'citas',            component: CitasComponent }
-  
-  
+  { path: 'citas',            component: CitasComponent }  
+
 ];
 
 @NgModule({

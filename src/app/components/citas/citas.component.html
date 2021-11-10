@@ -1,1 +1,160 @@
-<p>citas works!</p>
+<div>
+    <div class="row" *ngIf="Acciones.length != 0" > 
+            <div class="col-md-12 row">
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
+                   <ul class="nav nav-tabs md-tabs" id="myTab" role="tablist">
+                      <ng-container *ngFor=" let Accion of Acciones "> 
+                         <li *ngIf="Accion.status == true"  class="nav-item pointer" role="presentation">
+                            <a class = "nav-link" 
+                                    id    = "home-tab" 
+                                    data-bs-toggle = "tab"  
+                                    data-toggle="tab"
+                                    [attr.data-target] = " '#'+ Accion.id "
+                                    [attr.data-bs-target] = " '#'+ Accion.id "
+                                    type  = "button"
+                                    role  = "tab"  
+                                    aria-selected="true"> {{Accion.accion}}
+                            </a>
+                            <div class="slide"></div>
+                         </li>
+                      </ng-container>             
+                       
+                    </ul>
+                </div>
+                <div class="col-md-12 row">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-10">
+                        <div class="tab-content" id="myTabContent"><br><br><br>
+                            
+                            <ng-container *ngFor=" let Accion of Acciones "> 
+
+                                    <div *ngIf="Accion.id == 1" class="tab-pane fade show active" id={{Accion.id}} role="tabpanel" aria-labelledby="home-tab">
+                                        <div style="text-align: center;" >
+                                            <h3>
+                                                Nueva Cita 
+                                            </h3>
+                                            <hr>
+                                         </div>
+                                         <div class="row">
+                                          
+                                              <div class="col-md-12 row">
+                                                 <div class="col-md-12">
+                                                    <h4>
+                                                       Fechas
+                                                    </h4><br>
+                                                 </div>
+                                                 <div class="col-md-4">
+                                                    <p>
+                                                       Fecha Tecnico
+                                                    </p>
+                                                    <input type="date" [(ngModel)]="SelectedData.fecha_inicio" class="form-control" id="start" name="trip-start" value={{myDateToday}} min="2001-01-01" max={{myDateToday}} >
+                                                 </div>
+                                                 <div class="col-md-4">
+                                                    <p>
+                                                       Fecha Medico
+                                                    </p>
+                                                    <input type="date" [(ngModel)]="SelectedData.fecha_fin" class="form-control" id="start" name="trip-start" value={{myDateToday}} min="2001-01-01" max={{myDateToday}} >
+                                                 </div>
+                                              </div>
+                                              <div class="col-md-12 row">
+                                                 <div class="col-md-12"><br>
+                                                    <hr>
+                                                    <h4>
+                                                       Personal
+                                                    </h4><br>
+                                                 </div>
+                                                 <div class="col-md-12 row">
+                                                    <div class="col-md-4">
+                                                       <p>Tecnicos</p>
+                                                       <div class="">
+                                                          <select [(ngModel)]="SelectedData.tecnico_id" class="form-control" id="">
+                                                             <option selected *ngFor="let Tecnico of Tecnicos" value={{Tecnico.user_id}} > 
+                                                                   {{ Tecnico.nombre }}  {{ Tecnico.apellidos }} 
+                                                             </option>
+                                                          </select>
+                                                         </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                       <p>Medicos</p>
+                                                       <div class="">
+                                                             <select [(ngModel)]="SelectedData.medico_id" class="form-control" id="">
+                                                                <option selected *ngFor="let Medico of Medicos" value={{Medico.user_id}} >  {{ Medico.nombre }}  {{ Medico.apellidos }} </option>
+                                                             </select>
+
+                                                       </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                       <p>Pacientes</p>
+                                                        <div>
+                                                            <select [(ngModel)]="SelectedData.paciente_id" class="form-control" id="">
+                                                                <option selected *ngFor="let Paciente of Pacientes" value={{Paciente.user_id}} > 
+                                                                   {{ Paciente.nombre }}  {{ Paciente.apellidos }} 
+                                                                </option>
+                                                            </select> 
+                                                       </div>
+                                                    </div> 
+                                                 </div>
+                                              </div>
+                                              <div class="col-md-12 row">
+                                                 <div class="col-md-12"><br>
+                                                    <hr>
+                                                    <h4>
+                                                       Informacion Examen
+                                                    </h4><br>
+                                                 </div>
+                                                 <div class="col-md-12 row">
+                                                    <div class="col-md-4">
+                                                       <p>Tipo de Examen</p>
+                                                       <select name="" [(ngModel)]="SelectedData.id_tipo_examen" class="form-control" id="" >
+                                                         <option *ngFor="let Examen of ListExamenes" value={{Examen.id}} selected >
+                                                            {{Examen.nombre}} 
+                                                         </option>  
+                                                       </select>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                       <p>Clinica</p>
+                                                       <select name="" [(ngModel)]="SelectedData.id_clinica" class="form-control" id="" >
+                                                          <option *ngFor="let Clinica of Clinicas" value={{Clinica.id_clinica}} selected >
+                                                             {{Clinica.NombreClinica}} <i style="color: gray;" > ({{Clinica.Ciudad}}) </i>
+                                                          </option>
+                                                       </select>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                       <p>Costo Examen <label style="color: gray;" > - ({{SelectedData.costo_examen | currency}}) </label> </p>
+                                                       <input class="form-control" [(ngModel)]="SelectedData.costo_examen" type="number" placeholder="Eje. $9999999" >
+                                                    </div>
+                   
+                                                 </div>
+                                                 <div class="col-md-12 row">
+                                                    <div class="col-md-3"><br><br>
+                                                        <button class="btn btn-danger" (click)="CrearCitas()" id="upload_book">Crear Examen</button>
+                                                    </div>
+                                                 </div> 
+                                                 
+                                              </div>
+                                           
+                                        </div> 
+                                    </div>
+                                    <div *ngIf="Accion.id == 2" class="tab-pane fade " id={{Accion.id}} role="tabpanel" aria-labelledby="home-tab">
+                                        <div>
+                                            <app-calendario [id_usuario]="UserProfile?.id" [roll]="RollData[0].Roll" ></app-calendario>
+                                            <br><br><br><br><br>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="Accion.id == 3" class="tab-pane fade " id={{Accion.id}} role="tabpanel" aria-labelledby="home-tab">
+
+                                    </div>
+                                    <div *ngIf="Accion.id == 4" class="tab-pane fade " id={{Accion.id}} role="tabpanel" aria-labelledby="home-tab">
+                                        {{ Accion.accion }}
+                                    </div> 
+
+                            </ng-container>             
+
+                        </div>
+                    </div>
+                    <div class="col-md-1"></div>
+                </div>
+            </div> 
+    </div>
+</div>

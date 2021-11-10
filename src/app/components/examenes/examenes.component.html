@@ -169,20 +169,25 @@
   
                                 </div>
                                 <div class="col-md-12 row">
-                                   <div class="col-md-6"><br><br>
+                                   <div class="col-md-8"><br><br>
                                       <p>Descripcion Examen</p>
-                                      <textarea name="" [(ngModel)]="SelectedData.descripcion" class="form-control" placeholder="Descripcion" cols="15" rows="3"></textarea>
-                                   </div>
-                                   <div class="col-md-3">
-                                       <!-- <div class="form-group">
-                                          <label for="file">Choose File</label>
-                                          <input type="file"
-                                                   id="file"
-                                                   (change)="handleFileInput($event.target.files)">
-                                       </div> -->
-
-                                   </div>
-                                   <div class="col-md-3"><br><br>
+                                      <!-- <textarea name="" 
+                                                [(ngModel)]="SelectedData.descripcion" 
+                                                class="form-control" 
+                                                placeholder="Descripcion" 
+                                                cols="15" 
+                                                rows="3"></textarea> -->
+                                      <!-- <quill-editor [(ngModel)]="SelectedData.descripcion" [styles]="{height: '200px'}"></quill-editor> -->
+                                      <quill-editor 
+                                                      [styles]="{height: '200px'}" 
+                                                      (onFocus)="focus($event)" 
+                                                      (onEditorChanged)="changedEditor($event)"
+                                                      (onBlur)="blur($event)" 
+                                                      (onEditorCreated)="created($event)"
+                                                      [(ngModel)]="SelectedData.descripcion"
+                                                   ></quill-editor>
+                                    </div> 
+                                   <div class="col-md-4"><br><br>
                                        <button class="btn btn-danger" (click)="CrearExamen()" id="upload_book">Crear Examen</button>
                                    </div>
                                 </div>
@@ -321,12 +326,14 @@
                                        <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/>
                                     </svg>
                                  </div>
-                                 <div class="col-md-4" >
+                                 <div class="col-md-4" style="text-align: center;" >
                                     
-                                    Page {{ pagination.current_page }} <br>
-                                    <p style=" color: grey; " >
-                                       Total {{ pagination.last_page }}
-                                    </p>
+                                   <div>
+                                       Page {{ pagination.current_page }} <br>
+                                       <p style=" color: grey; " >
+                                          Total {{ pagination.last_page }}
+                                       </p>
+                                   </div>
 
                                  </div>
                                  <div class="col-md-3"  >
