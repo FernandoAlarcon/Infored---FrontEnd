@@ -49,6 +49,8 @@ export class CitasComponent implements OnInit {
    //calendar: MatCalendar<moment.Moment>;
  
   /////////////////////////////////////////////////////////
+
+
   
   isSignedIn   : boolean | undefined;
   UserProfile  : User    | undefined;
@@ -59,6 +61,9 @@ export class CitasComponent implements OnInit {
   
   SearchExamens    : string = "";
   DataTipoExamen   : string = "";
+  SearchDelete     : string = "";
+  SearchUpdate     : string = "";
+
   SearchMedicos    : string = "";
   SearchPacientes  : string = "";
   SearchTecnicos   : string = "";
@@ -76,8 +81,10 @@ export class CitasComponent implements OnInit {
   Pacientes     : any  = [];
   Clinicas      : any  = [];
   pagination    : any  = [];
+  
   myDateToday   : Date = new Date();
   SelectedData  : any = {
+    mood           : '1',
     fecha_inicio   : '',
     fecha_fin      : '',
     medico_id      : '',
@@ -163,9 +170,9 @@ export class CitasComponent implements OnInit {
         await this.CreateCita();
         await this.ListTipoExamenes();
       }else if ( elements.id == 2 && elements.status == true && elements.accion == "Listar" ){
-        await this.ListCitas();
+        //await this.ListCitas();
       }else if ( elements.id == 3 && elements.status == true && elements.accion == "Eliminar" ){
-
+        await this.ListEliminar();
       }
 
     }
@@ -265,29 +272,30 @@ export class CitasComponent implements OnInit {
 
   async CrearCitas() {
 
-    if (
+    if (  
+
           this.SelectedData.fecha_inicio   != '' &&
           this.SelectedData.fecha_fin      != '' &&
           this.SelectedData.medico_id      != '' &&
           this.SelectedData.tecnico_id     != '' &&
           this.SelectedData.paciente_id    != '' &&
           this.SelectedData.id_tipo_examen != '' &&
-          this.SelectedData.id_clinica     != '' &&
-          this.SelectedData.descripcion    != ''
+          this.SelectedData.id_clinica     != '' 
       ) {
 
         await this.servicesExamen.CreateExamen(this.SelectedData).subscribe(
           ( res : any ) => {
             if(res.status == true){
 
+              alert('Registro agregado');
+
               this.SelectedData.fecha_inicio   = '';
               this.SelectedData.fecha_fin      = '';
-              this.SelectedData.medico_id      = '';
-              this.SelectedData.tecnico_id     = '';
-              this.SelectedData.paciente_id    = '';
+              this.SelectedData.medico_id      = this.Medicos[0].user_id;
+              this.SelectedData.tecnico_id     = this.Tecnicos[0].user_id;
+              this.SelectedData.paciente_id    = this.Pacientes[0].user_id;
               this.SelectedData.id_tipo_examen = this.idExamenSelected;
-              this.SelectedData.id_clinica     = '';
-              this.SelectedData.descripcion    = '';
+              this.SelectedData.id_clinica     = ''; 
               this.SelectedData.costo_examen   = '0';
 
             
@@ -305,6 +313,82 @@ export class CitasComponent implements OnInit {
 
   }//// FINISH CrearCitas
 
-  ListCitas(){}
+  async ListEliminar(){
+    
+    //alert('se jue cole');
+    await this.CitasService.GetCitas( this.UserProfile?.id,  this.RollData[0].Roll, '2', this.SearchDelete).subscribe(
+      async ( res : any ) => {
+        
+        this.AllCitas = res.citas;   
+ 
+        if( this.AllCitas.length == 0 ){
+          await alert('No hay citas con esas caracteristicas')
+        }else{
+          //this.calendarOptions;
+        }
+      }
+    )
+    //this.ngAfterViewInit();
+  }
+
+  async DeleteCita( Data : any ){
+    
+    if( confirm('¿ Estas seguro que deseas eliminar este registro ?') ){
+      await this.CitasService.DeleteCitas(Data.IdExamen).subscribe(
+        ( res : any ) => {
+
+          if( res.status == true ){
+            this.ListEliminar();
+            this.ListUpdate();
+            alert('Registro eliminado');
+          }else{
+            alert('hubo algunos problemas');
+          }
+
+        }
+      )
+    }
+
+
+  }
+
+  async UpdateCita( Data : any, Estado : any ){
+
+    let DataSend = {
+        'mood'   : '1',
+        'estado' : Estado
+    }
+
+    await this.CitasService.UpdateStateCitas( Data.IdExamen, DataSend).subscribe(
+      ( res : any ) => {
+          
+        if( res.status == true ){
+          this.ListUpdate()
+        }else{
+          alert('Sucedio algo');
+        }
+
+      }
+    )
+
+  }
+
+  async ListUpdate(){
+    
+    //alert('se jue cole');
+    await this.CitasService.GetCitas( this.UserProfile?.id,  this.RollData[0].Roll, '2', this.SearchUpdate).subscribe(
+      async ( res : any ) => {
+         
+        this.AllCitas = res.citas;   
+ 
+        if( this.AllCitas.length == 0 ){
+          await alert('No hay citas con esas caracteristicas')
+        }else{
+          //this.calendarOptions;
+        }
+      }
+    )
+    //this.ngAfterViewInit();
+  }
 
 }

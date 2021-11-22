@@ -25,4 +25,8 @@ export class RollServices {
     GetRollLike(data : Object):Observable<any>{
         return this.http.get(`${GLOBAL.UrlLocalTest}/api/roles?data=${data}`);
     }
+
+    UpdateRoll(id_roll : string, id_user : any ):Observable<any>{
+        return this.http.put(`${GLOBAL.UrlLocalTest}/api/user-permisos/${ id_roll }`, id_user);
+    }
 } 

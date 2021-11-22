@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { APP_BASE_HREF } from '@angular/common';
+import { APP_BASE_HREF, CommonModule  } from '@angular/common';
 
  
 
@@ -27,13 +27,14 @@ import { HomeComponent } from './components/home/home.component';
 import { ProductsComponent } from './components/products/products.component';
 import { CategoryComponent } from './components/category/category.component';
 import { IndexHomeComponent } from './components/index-home/index-home.component';
-import { VerticalNavBarComponent } from './components/vertical-nav-bar/vertical-nav-bar.component';
+//import { VerticalNavBarComponent } from './components/vertical-nav-bar/vertical-nav-bar.component';
 import { PermisosRolesComponent } from './components/permisos-roles/permisos-roles.component';
 import { ExamenesComponent } from './components/examenes/examenes.component';
 import { CitasComponent } from './components/citas/citas.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { DiagnosticoComponent } from './components/diagnostico/diagnostico.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 // QUIL 
 import * as  Quill from 'ngx-quill'; 
@@ -47,21 +48,30 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatGridListModule} from '@angular/material/grid-list';
 
 
-/// CALENDAR 
+/// CALENDAR  
 import { FullCalendarModule } from '@fullcalendar/angular'; // must go before plugins
  
-import dayGridPlugin          from '@fullcalendar/daygrid'; // a plugin!
-import interactionPlugin      from '@fullcalendar/interaction'; 
+import dayGridPlugin                   from '@fullcalendar/daygrid'; // a plugin!
+import interactionPlugin               from '@fullcalendar/interaction'; 
+import { NgbModalModule }              from '@ng-bootstrap/ng-bootstrap';
+import { FlatpickrModule }             from 'angularx-flatpickr';
+import { CalendarModule, DateAdapter } from 'angular-calendar';
+import { adapterFactory }              from 'angular-calendar/date-adapters/date-fns';
+
 //import resourceTimelinePlugin from '@fullcalendar/resource-timeline'; // a plugin!
 
 import Counter from './counter';
 import { CalendarioComponent } from './components/citas/calendario/calendario.component';
  
 
-FullCalendarModule.registerPlugins([ // register FullCalendar plugins
-  dayGridPlugin,
-  interactionPlugin
-]);
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { PersonalUsuariosComponent } from './components/personal-usuarios/personal-usuarios.component';
+import { NavigationHomeComponent } from './components/navigation-home/navigation-home.component'; 
+
+  FullCalendarModule.registerPlugins([ // register FullCalendar plugins
+    dayGridPlugin,
+    interactionPlugin
+  ]);
 
 @NgModule({
   declarations: [
@@ -74,18 +84,23 @@ FullCalendarModule.registerPlugins([ // register FullCalendar plugins
     ProductsComponent,
     CategoryComponent,
     IndexHomeComponent,
-    VerticalNavBarComponent,
+    
+    //VerticalNavBarComponent,
+    
     PermisosRolesComponent,
     ExamenesComponent,
     CitasComponent,
     FooterComponent,
     DiagnosticoComponent,
-    CalendarioComponent
+    CalendarioComponent,
+    PersonalUsuariosComponent,
+    NavigationHomeComponent
   ],
   imports: [
     HttpClientModule,
     AppRoutingModule,
-    BrowserModule,
+    //BrowserModule,
+    BrowserModule.withServerTransition({ appId: 'serverApp' }),
     ReactiveFormsModule,
     FormsModule,
     MDBBootstrapModule.forRoot(),
@@ -95,7 +110,7 @@ FullCalendarModule.registerPlugins([ // register FullCalendar plugins
     MatCardModule,
     MatIconModule,
 
-    
+    FullCalendarModule, 
     QuillModule.forRoot({
       customModules: [{
         implementation: Counter,
@@ -106,9 +121,20 @@ FullCalendarModule.registerPlugins([ // register FullCalendar plugins
         whitelist: ['mirza', 'roboto', 'aref', 'serif', 'sansserif', 'monospace']
       }]
     }),
-    FullCalendarModule, 
-    
+    MDBBootstrapModule.forRoot(),
+
+    CommonModule,
+    FormsModule, 
+    NgbModalModule,
+    FlatpickrModule.forRoot(),
+    CalendarModule.forRoot({
+      provide: DateAdapter,
+      useFactory: adapterFactory,
+    }),
+    NgbModule
   ],
+  //declarations: [AppComponent],
+  exports: [AppComponent],
   providers: [
     {  
       provide: HTTP_INTERCEPTORS, 
@@ -120,6 +146,19 @@ FullCalendarModule.registerPlugins([ // register FullCalendar plugins
       useValue : '/' , 
     }
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  
 })
 export class AppModule { }
+
+// export class BootstrapModule {}
+
+// platformBrowserDynamic().bootstrapModule(BootstrapModule).then(ref => {
+//   // Ensure Angular destroys itself on hot reloads.
+//   if (window['ngRef']) {
+//     window['ngRef'].destroy();
+//   }
+//   window['ngRef'] = ref;
+
+//   // Otherwise, log the boot error
+// }).catch(err => console.error(err));

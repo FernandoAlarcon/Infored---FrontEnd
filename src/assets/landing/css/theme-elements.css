@@ -6843,7 +6843,7 @@ ul.thumbnail-gallery li {
 
 /* Lazy */
 .lazy-bg {
-	background-image: url(img/lazy.png);
+	background-image: url(../img/lazy.png);
 }
 
 /* Arrows */

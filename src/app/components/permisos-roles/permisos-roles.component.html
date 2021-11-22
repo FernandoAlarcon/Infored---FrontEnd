@@ -36,9 +36,10 @@
                         <p>
                             Acciones - {{ RollSelectNameGet }} - {{ ModuloSelected }}
                         </p>
-                        <div *ngIf="CharguerAccion == true" class="spinner-border" style="text-align: center; width: 100%;" role="status">
-                            <span class="sr-only">Loading...</span>
-                        </div>
+                        <div *ngIf="CharguerAccion == true"  style="text-align: center; width: 100%;" role="status"> 
+                            <div class="loader"></div>
+                            <br><br><br>
+                        </div> 
                         <div *ngFor="let Accion of AccionesPermisos" class="form-check form-switch " >        
                             <input *ngIf="Accion.disable == true" class="form-check-input"  [value]="Accion.id"  type="checkbox" id="flexSwitchCheckChecked" disabled="{{Accion.disable}}" checked="{{Accion.checked}}" >
                             <input *ngIf="Accion.disable == false"  class="form-check-input" (change)='CreateAccion(Accion.id)'  [value]="Accion.id"  type="checkbox" id="flexSwitchCheckChecked" checked="{{Accion.checked}}" >

@@ -4,7 +4,10 @@ import { Router, ActivatedRoute } from '@angular/router';
 
 import { TokenService } from '../../shared/token.service'; 
 import { AuthService } from 'src/app/shared/auth.service';
+
 import { Permisos } from '../../services/services-data/user-permisos.service';
+import { Usuarios } from '../../services/services-data/usuarios.services';
+
 import { AuthStateService } from '../../shared/auth-state.service';
 
 export class User {
@@ -26,6 +29,9 @@ export class NavigationComponent implements OnInit {
   PermisosData : any = []; 
   StateArrow   : any = false; 
 
+  RollData     : any = [];
+
+  DataSearchUsers : string = "";
  
   cliente = {
     id:'',
@@ -42,34 +48,45 @@ export class NavigationComponent implements OnInit {
   ClientFunction: any;
 
 
-  constructor(
-              // private ClientFunction: ClientesComponent,
-              // private clientesService: ClientesService,
+  constructor( 
               public  token          : TokenService,
               public  authService    : AuthService,
               private auth           : AuthStateService, 
               private router         : Router,
               private permisos       : Permisos,
-              private activatedRoute : ActivatedRoute ) {}
+              private activatedRoute : ActivatedRoute,
+              private userService    : Usuarios  ) {}
 
   ngOnInit() {
 
-    this.auth.userAuthState.subscribe(val => {
+    this.auth.userAuthState.subscribe( ( val : any ) => {
         this.isSignedIn = val;
 
+        if(!this.isSignedIn || val.message == 'Unauthenticated.' || val.message == 'Unauthenticated'  ){
+          this.signOut();
+        }
     });
 
     this.authService.profileUser().subscribe((data:any) => {
-      this.UserProfile = data; 
-      this.getPermisos();
+
+      if ( data.message == 'Unauthenticated.' || data.message == 'Unauthenticated' || data.status == "Unauthorized" ) {
+        this.signOut();
+      }else{
+
+        this.UserProfile = data; 
+        this.getPermisos();
+        this.GetUsers();
+
+      }
+
     })
 
         
   } /// FINAL ngOnInit
 
-  getPermisos():void{ 
+  async getPermisos(){ 
 
-    this.permisos.GetPermisos(this.UserProfile?.id).subscribe(
+    await this.permisos.GetPermisos(this.UserProfile?.id).subscribe(
       (res:any) => {
          if(res.status == true) {
            this.PermisosData = res.permisos;
@@ -78,14 +95,30 @@ export class NavigationComponent implements OnInit {
       }
     )
 
-  }
+    await this.permisos.GetOwnRoll(this.UserProfile?.id,'OwnRollData').subscribe(
+      (res : any) => {
+        if(res.status == true){
+          this.RollData = res.rollData;
+          console.log(this.RollData[0].Roll);
+        }
+      }
+    )
 
+  }
 
    // Signout
   signOut() {
     this.auth.setAuthState(false);
     this.token.removeToken();
     this.router.navigate(['login']);
+  }
+
+  GetUsers(){
+    this.userService.GetUsuarios( this.DataSearchUsers, '2' ).subscribe(
+      ( res : any ) => {
+
+      }
+    )
   }
 
   

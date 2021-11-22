@@ -17,6 +17,7 @@ import { UserProfileComponent } from './components/user-profile/user-profile.com
 import { from } from 'rxjs';
 import { PermisosRolesComponent } from './components/permisos-roles/permisos-roles.component';
 import { IndexHomeComponent } from './components/index-home/index-home.component';
+import { PersonalUsuariosComponent } from './components/personal-usuarios/personal-usuarios.component';
 
 const routes: Routes = [
 
@@ -31,6 +32,8 @@ const routes: Routes = [
   { path: 'login',      component: SigninComponent },
   { path: 'categories', component: CategoryComponent },
 
+
+  { path: 'usuarios',   component: PersonalUsuariosComponent },
 
   { path: 'modulos-permisos', component: PermisosRolesComponent },
   { path: 'examenes',         component: ExamenesComponent },

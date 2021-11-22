@@ -1,36 +1,27 @@
-import { AfterViewInit, Directive, Component, EventEmitter, Output, Renderer2, ViewChild, OnInit, Input } from '@angular/core';
-import { Calendar, CalendarOptions, FullCalendarComponent } from '@fullcalendar/angular';  
-import { Citas } from 'src/app/services/services-data/citas.services';
-
-
+import { Component, OnInit, ChangeDetectionStrategy, ViewChild, Output, Input, TemplateRef, } from '@angular/core';
+import { startOfDay, endOfDay, subDays, addDays, endOfMonth, isSameDay, isSameMonth, addHours, } from 'date-fns';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
- 
-import { HttpClient } from '@angular/common/http';
-
-import * as $ from 'jquery';
-import * as moment from 'moment';
-import 'fullcalendar';
-
+import { Subject } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap'; 
+import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarView } from 'angular-calendar';
+//////// SERVICES 
+import { Citas } from 'src/app/services/services-data/citas.services';
 
 const colors: any = {
   red: {
     primary: '#ad2121',
     secondary: '#FAE3E3',
   },
-  blue: { 
+  blue: {
     primary: '#1e90ff',
-    secondary: '#D1E8FF',   
+    secondary: '#D1E8FF',
   },
   yellow: {
     primary: '#e3bc08',
     secondary: '#FDF1BA',
-  }, 
+  },
 };
 
-@Directive({
-  selector: '[fullCalendar]',
-  exportAs:'fullCalendar'
-})
 
 @Component({
   selector: 'app-calendario',
@@ -38,7 +29,153 @@ const colors: any = {
   styleUrls: ['./calendario.component.css']
 })
 
-export class CalendarioComponent implements OnInit {
+export class CalendarioComponent  {
+
+  @ViewChild('modalContent', { static: true }) modalContent: TemplateRef<any> | undefined;
+
+  view: CalendarView = CalendarView.Month;
+
+  CalendarView = CalendarView;
+
+  viewDate: Date = new Date();
+
+  modalData: {
+    action: string;
+    event: CalendarEvent;
+  } | undefined;
+
+  actions: CalendarEventAction[] = [
+    {
+      label: '<i class="fas fa-fw fa-pencil-alt"></i>',
+      a11yLabel: 'Edit',
+      onClick: ({ event }: { event: CalendarEvent }): void => {
+        this.handleEvent('Edited', event);
+      },
+    },
+    {
+      label: '<i class="fas fa-fw fa-trash-alt"></i>',
+      a11yLabel: 'Delete',
+      onClick: ({ event }: { event: CalendarEvent }): void => {
+        this.events = this.events.filter((iEvent) => iEvent !== event);
+        this.handleEvent('Deleted', event);
+      },
+    },
+  ];
+
+  refresh: Subject<any> = new Subject();
+
+  events: CalendarEvent[] = [];
+  // [
+  //   {
+  //     start: subDays(startOfDay(new Date()), 1),
+  //     end: addDays(new Date(), 1),
+  //     title: 'A 3 day event',
+  //     color: colors.red.primary,
+  //     actions: this.actions,
+  //     allDay: true,
+  //     resizable: {
+  //       beforeStart: true,
+  //       afterEnd: true,
+  //     },
+  //     draggable: true,
+  //   },
+  //   {
+  //     start: startOfDay(new Date()),
+  //     title: 'An event with no end date',
+  //     color: colors.yellow.primary,
+  //     actions: this.actions,
+  //   },
+  //   {
+  //     start: subDays(endOfMonth(new Date()), 3),
+  //     end: addDays(endOfMonth(new Date()), 3),
+  //     title: 'A long event that spans 2 months',
+  //     color: colors.blue.secondary,
+  //     allDay: true,
+  //   },
+  //   {
+  //     start: addHours(startOfDay(new Date()), 2),
+  //     end: addHours(new Date(), 2),
+  //     title: 'A draggable and resizable event',
+  //     color: colors.yellow.secondary,
+  //     actions: this.actions,
+  //     resizable: {
+  //       beforeStart: true,
+  //       afterEnd: true,
+  //     },
+  //     draggable: true,
+  //   },
+  // ];
+
+  activeDayIsOpen: boolean = true;
+ 
+
+  dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
+    if (isSameMonth(date, this.viewDate)) {
+      if (
+        (isSameDay(this.viewDate, date) && this.activeDayIsOpen === true) ||
+        events.length === 0
+      ) {
+        this.activeDayIsOpen = false;
+      } else {
+        this.activeDayIsOpen = true;
+      }
+      this.viewDate = date;
+    }
+  }
+
+  eventTimesChanged({
+    event,
+    newStart,
+    newEnd,
+  }: CalendarEventTimesChangedEvent): void {
+    this.events = this.events.map((iEvent) => {
+      if (iEvent === event) {
+        return {
+          ...event,
+          start: newStart,
+          end: newEnd,
+        };
+      }
+      return iEvent;
+    });
+    this.handleEvent('Dropped or resized', event);
+  }
+
+  handleEvent(action: string, event: CalendarEvent): void {
+    this.modalData = { event, action };
+    this.modal.open(this.modalContent, { size: 'lg' });
+  }
+
+  addEvent(): void {
+    this.events = [
+      ...this.events,
+      {
+        title: 'New event',
+        start: startOfDay(new Date()),
+        end: endOfDay(new Date()),
+        color: colors.red,
+        draggable: true,
+        resizable: {
+          beforeStart: true,
+          afterEnd: true,
+        },
+      },
+    ];
+  }
+
+  deleteEvent(eventToDelete: CalendarEvent) {
+    this.events = this.events.filter((event) => event !== eventToDelete);
+  }
+
+  setView(view: CalendarView) {
+    this.view = view;
+  }
+
+  closeOpenMonthViewDay() {
+    this.activeDayIsOpen = false;
+  }
+
+
 
   //////////////////////////////////////////////////////////////////////
   @Input() 
@@ -47,90 +184,35 @@ export class CalendarioComponent implements OnInit {
   roll       : any = '' ;
  
   //////////////////////////////////////////////////////////////////////
- 
-  selectedDate = moment();
-  minDate: moment.Moment | undefined;
-  maxDate: moment.Moment | undefined;
-
-  @Output()
-  dateSelected: EventEmitter<moment.Moment> = new EventEmitter();
-
-  @Output()
-  monthSelected: EventEmitter<moment.Moment> = new EventEmitter();
-
-  @ViewChild('calendar', { static: true })
-  calendar: any|undefined; 
-  //calendar:  MatCalendar<moment.Moment> |undefined; 
-
-
-  //@ViewChild('calendar')
-  calendarComponent: FullCalendarComponent | undefined;
-
-  //   /////////////////////////////////////////////////////////
-  //AllCitas : any  = [{ title: 'evento 1', date: '2021-12-01' }, { title: 'evento 2', date: '2021-12-02' }];
+  Events   : any  = [];  
   AllCitas : any  = [];
 
                   
-   constructor( private renderer       : Renderer2,
-                private CitasService   : Citas ) { }
+   constructor( private CitasService   : Citas,
+                private modal: NgbModal ) { }
 
   ngOnInit(): void {
-
-     console.log('Data1 :' + this.id_usuario + ' Data2 :' + this.roll)
-     this.ListCitas()
-   }
-
-   calendarOptions: CalendarOptions = {
-     initialView: 'dayGridMonth',
-     dateClick: this.handleDateClick.bind(this),  //bind is important!
-
-     events: this.AllCitas
-   };
-
-  handleDateClick( arg : any ) {
-    alert('date click! ' + arg.dateStr)
+    
+    console.log(' Formato de fecha : '+startOfDay(new Date()))
+    this.ListCitas()
+    
   }
-
-   setMinDate() {
-     this.minDate = moment().add(-10, 'day');
-   }
-
-   setMaxDate() {
-     this.maxDate = moment().add(10, 'day');
-   }
-
-   toggleWeekends() {
-     this.calendarOptions.weekends = !this.calendarOptions.weekends // toggle the boolean!
-  }
-
-  ngAfterViewInit() {
-    const buttons = document.querySelectorAll('.mat-calendar-previous-button, .mat-calendar-next-button');
-
-    if (buttons) {
-      Array.from(buttons).forEach(button => {
-        this.renderer.listen(button, 'click', () => {
-          this.monthSelected.emit(this.calendar.activeDate);
-        });
-      });
-    }
-  }
- 
-  /////////////////////// COMPONENTS EVENT ///////////////////////////////
-
+   /////////////////////// COMPONENTS EVENT ///////////////////////////////
   
   async ListCitas(){
     
-    await this.CitasService.GetCitas(this.id_usuario,  this.roll).subscribe(
+    //alert('se jue cole');
+    await this.CitasService.GetCitas(this.id_usuario,  this.roll, '1', '').subscribe(
       async ( res : any ) => {
         
         this.AllCitas = res.citas;
+ 
+        this.events   = res.citas;
+        
+        //Calendar.addEvent( event, [ this.AllCitas ] );
+        
+        //var calendar = new Calendar( event, [ this.AllCitas ] )
 
-        $('#calendar').fullCalendar({
-          events: [
-            this.AllCitas
-          ]
-        }); 
-        //alert("Data's come")
         console.log({ tasaData : this.AllCitas});
         if( this.AllCitas.length == 0 ){
           await alert('No hay citas aun')
@@ -141,5 +223,7 @@ export class CalendarioComponent implements OnInit {
     )
     //this.ngAfterViewInit();
   }
+
+  
 
 }

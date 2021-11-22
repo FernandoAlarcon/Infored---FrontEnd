@@ -7,6 +7,13 @@
     border: solid inherit 10px;
 }
 
+.container-examenes-resultados{
+    overflow: auto;
+    height: 300px;
+    width: 100%;
+    border: solid inherit 10px;
+}
+
 .div-examen{ 
     background-color:#fff;
     border-top: #DED7D7;
@@ -20,6 +27,7 @@
     cursor: pointer;
 }
 
+    /* LOADER */
 
 .loader {
     border: 10px solid #f3f3f3;
@@ -42,6 +50,7 @@
     100% { transform: rotate(360deg); }
   }
 
+   /* END LOADER */
 
   #wrap{
     display: block;
@@ -111,4 +120,12 @@
   table {
     width: 100%;
     
+  }
+
+  .modal-xl .modal-lg {
+    max-width: 90%;
+  }
+
+  ng-template{
+      width: 95% !important;
   }

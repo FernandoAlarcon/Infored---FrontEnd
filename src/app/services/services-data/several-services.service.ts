@@ -36,4 +36,13 @@ export class SeveralServices {
     GetClinicas():Observable<any>{
         return this.http.get(`${GLOBAL.UrlLocalTest}/api/clinicas`);
     }
+
+    GetRoles():Observable<any>{
+        return this.http.get(`${GLOBAL.UrlLocalTest}/api/roles`);
+    }
+
+    GetTipoDocs():Observable<any>{
+        return this.http.get(`${GLOBAL.UrlLocalTest}/api/tipo-doc`);
+    }
+
 } 

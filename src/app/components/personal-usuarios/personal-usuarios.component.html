@@ -1,0 +1,163 @@
+<div>
+
+    <div class="row">
+        <div class="col-md-12" style="text-align: center;" >
+            <h3>
+                Personas Usuarios
+            </h3>
+        </div>
+        <div class="col-md-12 row" >
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Personas</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Agregar Usuarios</a>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+
+                <div class="tab-1 tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <br><br>
+                    <div class="col-md-12 row">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-10 containers-personas">
+                            <div class=" row table-responsive " style="height: 400%; overflow: auto; " >
+
+                                <table class="table table-striped table-bordered" >
+                                    <thead>
+                                        <tr>
+                                          <th scope="col"> Usuario </th>
+                                          <th scope="col"> Roll    </th> 
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let persona of PersonasUsers" >
+                                            <th scope="row">
+                                                {{ persona.Id_User }} / {{ persona.NombreUser }} {{ persona.ApellidoUser }} - {{ persona.Roll }} 
+                                            </th>
+                                            <ng-container *ngFor=" let Rol of Roles ">
+                                                <td>                                                 
+
+                                                    <button *ngIf=" persona.Id_roll != Rol.id " class="btn btn-primary " title="Cambiar a {{ Rol.name }}"  (click)="ChangueRoll( $event,  Rol, persona.Id_User )" >
+                                                        {{ Rol.name }}
+                                                    </button>
+
+                                                    <p *ngIf = " persona.Id_roll == Rol.id "     >
+                                                        {{ Rol.name }}
+                                                    </p>
+                                                    
+                                                </td> 
+                                            </ng-container>
+                                        </tr>
+                                    </tbody>
+                                </table> 
+
+                            </div>
+                        </div>
+                        <div class="col-md-2"></div>
+                    </div>
+                </div>
+                <div class="tab-3 tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                    <div class="row"><br><br>
+                        <div class="col-md-12 row">
+                            <div class="col-md-3"><br>
+                                <label for="">Nombre</label>
+                                <input class="form-control" type="text" [(ngModel)]="DataSend.Nombre" placeholder="Nombre">
+                                <hr>
+                            </div>
+                            <div class="col-md-3"><br>
+                                <label for="">Apellido</label>
+                                <input class="form-control" type="text" [(ngModel)]="DataSend.Apellido" placeholder="Apellido">
+                                <hr>
+                            </div>
+                            <div class="col-md-3"><br>
+                                <label for="">Tipo de Documento</label>
+                                <select name="" [(ngModel)]="DataSend.TipoDoc" class="form-control" id="">
+                                    <option *ngFor=" let tipo of TiposDoc " value={{tipo.id}} > {{ tipo.nombre }} </option>
+                                </select>
+                                <hr>
+                            </div>
+                            <div class="col-md-3"><br>
+                                <label for="">No Documento</label>
+                                <input class="form-control" type="text" [(ngModel)]="DataSend.documento" placeholder="Documento Identidad">
+                                <hr>
+                            </div>
+                            <div class="col-md-3"><br>
+                                <label for="">Roll Usuario</label>
+                                <select name="" [(ngModel)]="DataSend.roll" class="form-control" id="">
+                                    <option *ngFor="let Rol of Roles" value={{Rol.id}} > {{Rol.name}} </option>
+                                </select>
+                                <hr>
+                            </div>
+                            <div class="col-md-3"><br>
+                                <label for="">Fecha Nacimiento</label>
+                                <input class="form-control" type="date" [(ngModel)]="DataSend.fechaNacimiento" placeholder="">
+                                <hr>
+                            </div>
+                            <div class="col-md-3"><br>
+                                <label for="">Correo</label>
+                                <input class="form-control" type="email" [(ngModel)]="DataSend.email" placeholder="Correo">
+                                <i style="color: gray; font-size: 10px;" > Este usara para loguearse </i>
+                                <hr>
+                            </div>
+                            <div class="col-md-3"><br>
+                                <label for="">Telefono - Celular</label>
+                                <input class="form-control" type="number" [(ngModel)]="DataSend.telefono" placeholder="*123456789">
+                                <i style="color: gray; font-size: 10px;" > numero WSP </i>
+                                <hr>
+                            </div>
+                            <div class="col-md-3"><br>
+                                <label for="">Contraseña</label>
+                                <input class="form-control" type="text" [(ngModel)]="DataSend.Password" placeholder="Contraseña">
+                                <hr>
+                            </div>
+                            <div class="col-md-3"><br>
+                                <label for="">Direccion</label>
+                                <input class="form-control" type="text" [(ngModel)]="DataSend.direccion" placeholder="Crr 123 # 456">
+                                <hr>
+                            </div>
+                            <div class="col-md-3"><br>
+                                <label for="">Departamento</label>
+                                <select name="" [(ngModel)]="DataSend.Dep" (ngModelChange)="GetCiudades()" class="form-control" id="">
+                                    <option *ngFor=" let Dep of Departamentos " value={{Dep.id}} > {{ Dep.nombre }} </option>
+                                </select>
+                                <hr>
+                            </div>
+                            <div class="col-md-3"><br>
+                                <label for="">Ciudades</label>
+                                <select name="" [(ngModel)]="DataSend.Ciudad" class="form-control" id="">
+                                    <option *ngFor=" let Ciudad of Ciudades " value={{Ciudad.id}} > {{ Ciudad.nombre }} </option>
+                                </select>
+                                <hr>
+                            </div>
+                            <div class="col-md-3"><br>
+                                <label for="">Tipo de Sangre</label>
+                                <select name="" [(ngModel)]="DataSend.TipoSangre" class="form-control" id="">
+                                    <option value="A+" selected  > A+  </option>
+                                    <option value="A-"  > A-  </option>
+                                    <option value="B+"  > B+  </option>
+                                    <option value="B-"  > B-  </option>
+                                    <option value="AB+" > AB+ </option>
+                                    <option value="AB-" > AB- </option>
+                                    <option value="O+"  > O+  </option>
+                                    <option value="O-"  > O-  </option>
+                                </select>
+                                <hr>
+                            </div>
+
+                            <div class="col-md-3">
+                                <button (click)="AgregarPersona()" class="btn btn-success" >
+                                    Enviar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <br><br>
+    </div>
+
+</div>

@@ -34,6 +34,7 @@ export class SigninComponent implements OnInit {
       this.authService.signin(this.loginForm.value).subscribe(
         result => {
           this.responseHandler(result);
+          window.location.href = 'home-index';
         },
         error => {
           this.errors = error.error;

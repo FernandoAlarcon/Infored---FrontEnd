@@ -15,6 +15,8 @@ import Quill from 'quill'
 
 import { GLOBAL } from '../../services/global';
 
+//// MODAL
+import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
 
 //// PDF LIBRARIES
   
@@ -49,11 +51,13 @@ export class User {
 
 export class ExamenesComponent implements OnInit {
 
+  global : any = GLOBAL;
   isSignedIn   : boolean | undefined;
   UserProfile  : User    | undefined;
   PermisosData : any     = [];
 
-  CharguerData : boolean | undefined;
+  CharguerData       : boolean | undefined;
+  CharguerDataDelete : boolean | undefined;
 
   ////// DATA PDF
 
@@ -75,12 +79,14 @@ export class ExamenesComponent implements OnInit {
   DataTipoExamen   : string = "";
   ExamenSelected   : string = "";
   idExamenSelected : string = "";
-  SearchTecnicos   : string = "";
-  SearchMedicos    : string = "";
-  SearchPacientes  : string = "";
-
-  SearchExamens    : string = "";
-  IdAdjuntos       : string = "";
+  
+  SearchTecnicos      : string = "";
+  SearchMedicos       : string = "";
+  SearchPacientes     : string = "";
+  SearchDataExamen    : string = "";
+  SearchExamens       : string = "";
+  SearchExamensDelete : string = "";
+  IdAdjuntos          : string = "";
 
   myDateToday      : any = new Date();
 
@@ -89,12 +95,17 @@ export class ExamenesComponent implements OnInit {
   pagination       : any = [];
 
   /// END LISTAR
-
+  
+  ExamenesGetData  : any = [];
+  DataInfoExamenes : any = [];
+  ExamenesGetView  : any = [];
   TipoExamenes     : any = [];
   DataExamen       : any = [];
   RollData         : any = [];
   Acciones         : any = [];
+  DataListDelete   : any = [];
 
+  GetPictures      : any = [];
   Tecnicos         : any = [];
   Medicos          : any = [];
   Pacientes        : any = [];
@@ -104,19 +115,54 @@ export class ExamenesComponent implements OnInit {
   AdjuntosGet      : any = [];
 
   SelectedData     : any = {
-      fecha_inicio   : '',
-      fecha_fin      : '',
-      medico_id      : '',
-      tecnico_id     : '',
-      paciente_id    : '',
-      id_tipo_examen : '',
-      id_clinica     : '',
-      descripcion    : '',
-      costo_examen   : '0'
+      
+      idExamen         : '',
+      mood             : '2',
+      fecha_inicio     : '',
+      fecha_fin        : '',
+      medico_id        : '',
+      tecnico_id       : '',
+      paciente_id      : '',
+      id_tipo_examen   : '',
+      id_clinica       : '',
+      descripcion      : '',
+      costo_examen     : '0',
+      id_estado_examen : ''
   }
 
-  @ViewChild("fileUpload", {static: false})
+  WeSeeData     : any = {
+      
+    idExamen         : '',
+    mood             : '2',
+    fecha_inicio     : '',
+    fecha_fin        : '',
+
+    medico_id        : '',
+    medico           : '',
+
+    tecnico_id       : '',
+    tecnico          : '',
+    
+    paciente_id      : '',
+    paciente         : '',
+    
+    id_tipo_examen   : '',
+    id_clinica       : '',
+    descripcion      : '',
+    costo_examen     : '0',
+    id_estado_examen : '',
+
+    examen           : '',
+    clinica          : '',
+    estado           : ''
+}
+
+  @ViewChild("fileUpload", {static: false}) 
   fileUpload      : ElementRef | undefined; files = [];
+
+  title = 'appBootstrap';
+  closeResult: string = '';
+  
 
   constructor(
                 public  token          : TokenService,
@@ -127,7 +173,8 @@ export class ExamenesComponent implements OnInit {
                 private services       : SeveralServices,
                 private servicesExamen : ExamenesServices,
                 private sanitizer      : DomSanitizer,
-                private http           : HttpClient
+                private http           : HttpClient,
+                private modalService   : NgbModal, 
              ) { }
  
   ngOnInit() { 
@@ -148,7 +195,7 @@ export class ExamenesComponent implements OnInit {
 
   /////// QUILL EVENTS
 
-   blurred = false
+  blurred = false
   focused = false
 
   created(event: Quill) {
@@ -215,7 +262,7 @@ export class ExamenesComponent implements OnInit {
       },
       ( err : any ): void => {
         this.progressInfo[index].value = 0;
-        this.message                   = 'No se puede subir el archivo ' + file.name;
+        this.message                   = 'No se puede subir el archivo ' + file.name + ', no cumple las caracteristicas';
     });
 
     $('#fileInput').val('');
@@ -274,7 +321,7 @@ export class ExamenesComponent implements OnInit {
     )
   }/// FINAL GetTipoExamenes
 
-  async ListExamenes(){
+  async InfoListExamenes(){
     await this.SearcExamenes();
   }//// FINISH ListExamenes
 
@@ -284,6 +331,7 @@ export class ExamenesComponent implements OnInit {
     this.GetMedicos('58');
     this.GetPacientes('62');
     this.GetClinicas();
+    this.GetDataExamen();
 
   }
 
@@ -296,14 +344,31 @@ export class ExamenesComponent implements OnInit {
       if ( elements.id == 1 && elements.status == true && elements.accion == "Crear" ) {
         await this.CreateAccion();
       }else if ( elements.id == 2 && elements.status == true && elements.accion == "Listar" ){
-        await this.ListExamenes();
+        //await this.ListExamenes();
+        this.DataListExamen();
       }else if ( elements.id == 3 && elements.status == true && elements.accion == "Eliminar" ){
-
+        this.GetDelete();
       }
 
     }
 
   }//// FINAL MappingActionsEvents
+
+  async SearchExam(){
+ 
+    this.ExamenesGetView  = [];
+    this.CharguerData     = false;
+
+      await this.servicesExamen.ListExamenes(this.idExamenSelected, this.SearchExamens, this.pagination.current_page).subscribe(
+        ( res : any ) => {
+
+            this.ExamenesGet  = res.examenes.data;
+            this.pagination   = res.pagination;
+            this.CharguerData = true;
+
+        }
+      )
+  }
 
   async GetExamenes(IdExamen : any, Examen:string) {
 
@@ -314,6 +379,7 @@ export class ExamenesComponent implements OnInit {
 
     await this.GetActions();
     await this.MappingActionsEvents();
+    await this.GetDataExamen();
 
   }//// FINAL GetExamenes
 
@@ -397,21 +463,26 @@ export class ExamenesComponent implements OnInit {
       ) {
 
         await this.servicesExamen.CreateExamen(this.SelectedData).subscribe(
-          ( res : any ) => {
+          async ( res : any ) => {
             if(res.status == true){
-
+              alert('Informacion Actualizada');
               this.SelectedData.fecha_inicio   = '';
               this.SelectedData.fecha_fin      = '';
-              this.SelectedData.medico_id      = '';
-              this.SelectedData.tecnico_id     = '';
-              this.SelectedData.paciente_id    = '';
+              this.SelectedData.medico_id      = this.Medicos[0].user_id;
+              this.SelectedData.tecnico_id     = this.Tecnicos[0].user_id;
+              this.SelectedData.paciente_id    = this.Pacientes[0].user_id;
               this.SelectedData.id_tipo_examen = this.idExamenSelected;
               this.SelectedData.id_clinica     = '';
               this.SelectedData.descripcion    = '';
               this.SelectedData.costo_examen   = '0';
 
-              this.IdAdjuntos                  = res.IdEstados; 
-              this.uploadFiles();
+              this.IdAdjuntos    = res.IdEstados; 
+              await this.uploadFiles();
+              await this.GetDataExamen();
+              
+              this.selectedFiles = [];
+              this.message = '';
+
             }
           }
         )/// CreateExamen
@@ -451,7 +522,7 @@ export class ExamenesComponent implements OnInit {
                 
                 var foto          = element.adjunto;
                 var Terminacion   = foto.split(".");
-                var pathe         = GLOBAL.UrlLocalTest + "/adjuntos/examenes/" + element.adjunto;
+                var pathe         = this.global.UrlLocalTest + "/adjuntos/examenes/" + element.adjunto;
                 var Nombre        = Examen + '_' + c;
 
                 const reader   = new FileReader();
@@ -493,5 +564,135 @@ export class ExamenesComponent implements OnInit {
     )
 
   }///// FINISH DownloadExam
+
+  async GetDataExamen(){
+    
+      this.ExamenesGetData = [];   
+      this.CharguerData    = false;
+
+      await this.servicesExamen.ListDataExamen(this.idExamenSelected, this.SearchDataExamen, '1').subscribe(
+          ( res : any ) => {
+
+            this.CharguerData     = true;
+            this.ExamenesGetData  = res.examenes;  
+
+          }
+      )
+  }
+
+  async DataListExamen(){
+    
+    this.DataInfoExamenes = []; 
+
+    await this.servicesExamen.GetExamenes(this.UserProfile?.id, this.RollData[0].Roll, '2', this.SearchExamens, this.idExamenSelected).subscribe(
+        ( res : any ) => {
+
+            this.DataInfoExamenes  = res.examenes;   
+        }
+    )
+    
+  }
+
+  async GetDelete(){
+    
+    this.DataListDelete      = []; 
+    this.CharguerDataDelete  = false;
+    await this.servicesExamen.GetExamenes(this.UserProfile?.id, this.RollData[0].Roll, '2', this.SearchExamensDelete, this.idExamenSelected).subscribe(
+        ( res : any ) => {
+
+            this.DataListDelete      = res.examenes;   
+            this.CharguerDataDelete  = true;
+
+        }
+    )
+    
+  }
+
+  async ShowDataExam( Data : any ){
+
+    this.SelectedData.idExamen         = Data.IdExamen;
+    this.SelectedData.fecha_inicio     = Data.fecha_inicio;
+    this.SelectedData.fecha_fin        = Data.fecha_fin;
+    this.SelectedData.medico_id        = Data.medico_id;
+    this.SelectedData.tecnico_id       = Data.tecnico_id;
+    this.SelectedData.paciente_id      = Data.paciente_id;
+    this.SelectedData.id_tipo_examen   = Data.tipo_examen;
+    this.SelectedData.id_clinica       = Data.id_clinica;
+    this.SelectedData.descripcion      = Data.descripcion;
+    this.SelectedData.costo_examen     = Data.costo_examen;
+    this.SelectedData.id_estado_examen = Data.id_estado_examen;
+    
+    window.scroll({
+      top: 100,
+      left: 100,
+      behavior: 'smooth'
+    });
+
+    let elementReference = document.querySelector('#quilEditor');
+    if (elementReference instanceof HTMLElement) {
+        elementReference.focus();
+    }
+  }
+
+  async openData(content: any, DataExamen : any) {  
+
+    await this.servicesExamen.getFiles(DataExamen.IdExamen).subscribe(
+      ( res : any ) => {
+        this.GetPictures = res.adjuntos;
+      }
+    )
+
+    this.WeSeeData.idExamen         = DataExamen.IdExamen;
+    this.WeSeeData.fecha_inicio     = DataExamen.fecha_inicio;
+    this.WeSeeData.fecha_fin        = DataExamen.fecha_fin;
+
+    this.WeSeeData.medico           = DataExamen.medico;
+    this.WeSeeData.tecnico          = DataExamen.tecnico;
+    this.WeSeeData.paciente         = DataExamen.paciente;
+
+    this.WeSeeData.examen           = DataExamen.examen;
+    this.WeSeeData.clinica          = DataExamen.clinica;
+    this.WeSeeData.estado           = DataExamen.estado;
+
+    this.WeSeeData.descripcion      = DataExamen.descripcion;
+    this.WeSeeData.costo_examen     = DataExamen.costo_examen;
+    this.WeSeeData.id_estado_examen = DataExamen.id_estado_examen;
+
+
+
+    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+      this.closeResult = `Closed with: ${result}`;
+    }, (reason) => {
+      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    });
+    
+
+
+  }/// END openData()
+  
+  private getDismissReason(reason: any): string {
+    if (reason === ModalDismissReasons.ESC) {
+      return 'by pressing ESC';
+    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+      return 'by clicking on a backdrop';
+    } else {
+      return  `with: ${reason}`;
+    }
+  }
+
+  async DeleteData( Data : any ){
+    
+    if(confirm('Esta seguro que desea eliminar este registro ?..')){
+      this.servicesExamen.DeleteExamen(Data.IdExamen).subscribe(
+        ( res : any ) => {
+           if( res.status == true ){
+             alert('registro eliminado');
+             this.GetDelete()
+           }   
+        }
+      )/// END SERVICE
+    }/// END CONFIRM
+
+  }
 
 }
