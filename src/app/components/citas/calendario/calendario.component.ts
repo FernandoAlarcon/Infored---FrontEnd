@@ -155,6 +155,7 @@ export class CalendarioComponent  {
         end: endOfDay(new Date()),
         color: colors.red,
         draggable: true,
+        actions: this.actions,
         resizable: {
           beforeStart: true,
           afterEnd: true,
@@ -215,6 +216,7 @@ export class CalendarioComponent  {
                 title: element.title,
                 start: new Date(element.start),//startOfDay(element.start),
                 end:   new Date(element.end),//endOfDay(element.emd),
+                actions: this.actions,
                 color: element.color,
                 draggable: true,
                 resizable: {
