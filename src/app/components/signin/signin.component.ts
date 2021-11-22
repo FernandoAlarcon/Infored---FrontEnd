@@ -34,7 +34,7 @@ export class SigninComponent implements OnInit {
       this.authService.signin(this.loginForm.value).subscribe(
         result => {
           this.responseHandler(result);
-          window.location.href = 'home-index';
+          window.location.href = 'profile';
         },
         error => {
           this.errors = error.error;
@@ -42,6 +42,8 @@ export class SigninComponent implements OnInit {
           this.authState.setAuthState(true);
           this.loginForm.reset()
           this.router.navigate(['/products']);
+          window.location.href = 'profile';
+
         }
       );
   }

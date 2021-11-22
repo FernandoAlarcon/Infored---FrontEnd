@@ -151,7 +151,7 @@ export class CitasComponent implements OnInit {
     ////  SEGUNDO PARAMETRO ES EL ID DEL ROLL
     await this.permisos.GetAcciones(this.RollData[0].IdRoll, '2').subscribe(
       async (res : any) => {
-        console.log({data : res})
+        
         if(res.status == true){
           this.Acciones = res.acciones;
           await this.MappingActionsEvents();
@@ -305,7 +305,6 @@ export class CitasComponent implements OnInit {
 
     }else{
 
-      console.log( this.SelectedData );
       alert(' Hay campos obligatorios ');
 
     }///
@@ -322,7 +321,7 @@ export class CitasComponent implements OnInit {
         this.AllCitas = res.citas;   
  
         if( this.AllCitas.length == 0 ){
-          await alert('No hay citas con esas caracteristicas')
+          //await alert('No hay citas con esas caracteristicas')
         }else{
           //this.calendarOptions;
         }

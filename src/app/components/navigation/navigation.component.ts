@@ -105,12 +105,14 @@ export class NavigationComponent implements OnInit {
     )
 
   }
-
+ 
    // Signout
   signOut() {
     this.auth.setAuthState(false);
     this.token.removeToken();
-    this.router.navigate(['login']);
+    this.router.navigate(['home']);
+    window.location.href = 'home-index';
+
   }
 
   GetUsers(){

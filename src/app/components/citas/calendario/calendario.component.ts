@@ -205,15 +205,36 @@ export class CalendarioComponent  {
     await this.CitasService.GetCitas(this.id_usuario,  this.roll, '1', '').subscribe(
       async ( res : any ) => {
         
-        this.AllCitas = res.citas;
+        this.AllCitas = await res.citas; 
+        
+        for (let index = 0; index < this.AllCitas.length; index++) {
+            let element = this.AllCitas[index];
+            this.events = [
+              ...this.events,
+              {
+                title: element.title,
+                start: new Date(element.start),//startOfDay(element.start),
+                end:   new Date(element.end),//endOfDay(element.emd),
+                color: element.color,
+                draggable: true,
+                resizable: {
+                  beforeStart: true,
+                  afterEnd: true,
+                },
+              },
+            ];
+
+        }/// END FOR 
  
-        this.events   = res.citas;
+
+        //this.events   = res.citas;
+
+        
         
         //Calendar.addEvent( event, [ this.AllCitas ] );
         
         //var calendar = new Calendar( event, [ this.AllCitas ] )
-
-        console.log({ tasaData : this.AllCitas});
+ 
         if( this.AllCitas.length == 0 ){
           await alert('No hay citas aun')
         }else{
