@@ -10,9 +10,16 @@
         <div class="col-md-12">
             <div>
                 <h4>Roles</h4><hr>
-                <select class="form-control" [(ngModel)]="RollSelect" (change)="GetPermisosRoll()" > 
+               <ng-container *ngFor="let Rol of Roles"  >
+                  <label for="">
+                    <input type="radio"  [(ngModel)]="RollSelect" value={{Rol.id}} (click)="GetPermisosRoll(Rol.id)" /> {{Rol.name}}
+                  </label>
+                  <br>
+               </ng-container>
+                <!-- <select class="form-control" [(ngModel)]="RollSelect" (change)="GetPermisosRoll()" > 
                     <option *ngFor="let Rol of Roles" value={{Rol.id}} >{{Rol.name}}</option>
-                </select><br><br>
+                </select> -->
+                <br><br>
             </div>
             <div class="card" > 
                 <div class="card-body row"> 
@@ -23,7 +30,7 @@
                             </p>
                             <div *ngFor="let Modulo of ModulosRoles" (click)="ChoseModulo(Modulo.id, Modulo.modulo)" class="form-check div-modulos form-switch pointer" title="Presiona {{Modulo.modulo}} para saber acciones">
                                 <input class="form-check-input" (change)='CreatePermiso(Modulo.id, Modulo.modulo)'  [value]="Modulo.id"  type="checkbox" id="flexSwitchCheckChecked" checked="{{Modulo.checked}}">
-                                <label class="form-check-label" for="flexSwitchCheckChecked">{{Modulo.modulo}} </label>
+                                <label class="form-check-label"  >{{Modulo.modulo}} </label>
                             </div>
                         </div>
                         <div *ngIf="ModulosCome == false" >

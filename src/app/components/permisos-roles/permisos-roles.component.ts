@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
 //import { Roles } from '../../services/services-data/roles.services'
 import { Permisos } from '../../services/services-data/user-permisos.service';
 
@@ -11,7 +12,9 @@ import { Permisos } from '../../services/services-data/user-permisos.service';
 
 export class PermisosRolesComponent implements OnInit {
   // private ServicioRoles : RolesService
-  constructor(private permisos:Permisos) { }
+  constructor( private permisos : Permisos,
+               private toastr   : ToastrService
+    ) { }
 
   Roles            : any = [];
   Permisos         : any = [];
@@ -53,17 +56,17 @@ export class PermisosRolesComponent implements OnInit {
       this.permisos.GetRoles('','').subscribe(
         (res:any) => {
           if(res.status == true){
-            this.Roles = res.roles;
-            console.log({roles: this.Roles})
+            this.Roles = res.roles;  
           }
         }
       )
   }
 
-  GetPermisosRoll(){
+  GetPermisosRoll(RolId : any){
      
     this.CharguerAccion = true;
     this.AccionesPermisos = [];
+    this.RollSelect = RolId;
     this.permisos.GetPermisosRoles('',this.RollSelect,'').subscribe(
        (res:any) => {
         if(res.status == true){
@@ -95,10 +98,12 @@ export class PermisosRolesComponent implements OnInit {
 
         let status = res.status;
 
-        if (status == true) {
-          this.AlertSucces   = true; 
-        }else{  
-          this.DangerSucces  = true;
+        if (status == true) { 
+          this.toastr.success('Registro Actualizado'); 
+
+        }else{   
+          this.toastr.error('No se puede actualizar'); 
+
         }
 
       }
@@ -141,13 +146,13 @@ export class PermisosRolesComponent implements OnInit {
     await this.permisos.CreatePermisosRol(this.DataPermiso).subscribe(
       (res : any) => {
         if(res.status == true){ 
-          this.AlertSucces      = true;
+          this.toastr.success('Registro Actualizado'); 
           this.CharguerAccion   = false;
           this.ChoseModulo(IdModulo, NombreModulo);
 
         }else {
-            this.GetPermisosRoll();
-            this.DangerSucces = true;
+            this.GetPermisosRoll(this.RollSelect);
+            this.toastr.error('No se puede actualizar'); 
         }
       }
     )

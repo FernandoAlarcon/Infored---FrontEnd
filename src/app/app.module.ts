@@ -67,6 +67,8 @@ import { CalendarioComponent } from './components/citas/calendario/calendario.co
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { PersonalUsuariosComponent } from './components/personal-usuarios/personal-usuarios.component';
 import { NavigationHomeComponent } from './components/navigation-home/navigation-home.component'; 
+ 
+import { ToastrModule } from 'ngx-toastr';
 
   FullCalendarModule.registerPlugins([ // register FullCalendar plugins
     dayGridPlugin,
@@ -131,7 +133,8 @@ import { NavigationHomeComponent } from './components/navigation-home/navigation
       provide: DateAdapter,
       useFactory: adapterFactory,
     }),
-    NgbModule
+    NgbModule,
+    ToastrModule.forRoot()
   ],
   //declarations: [AppComponent],
   exports: [AppComponent],

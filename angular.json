@@ -41,7 +41,8 @@
               "./node_modules/quill/dist/quill.bubble.css", 
               "./node_modules/quill/dist/quill.snow.css",
               "./node_modules/quill-emoji/dist/quill-emoji.css",
-              "./node_modules/angular-calendar/css/angular-calendar.css"
+              "./node_modules/angular-calendar/css/angular-calendar.css",
+              "./node_modules/ngx-toastr/toastr.css"
               //"node_modules/quill-mention/dist/quill.mention.min.css"
             ],
             "scripts": [

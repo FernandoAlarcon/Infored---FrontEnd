@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import {HttpEventType, HttpErrorResponse, HttpResponse} from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+
 
 import { TokenService } from '../../shared/token.service';
 import { AuthService } from 'src/app/shared/auth.service';
@@ -175,6 +177,8 @@ export class ExamenesComponent implements OnInit {
                 private sanitizer      : DomSanitizer,
                 private http           : HttpClient,
                 private modalService   : NgbModal, 
+                private toastr         : ToastrService
+
              ) { }
  
   ngOnInit() { 
@@ -199,25 +203,21 @@ export class ExamenesComponent implements OnInit {
   focused = false
 
   created(event: Quill) {
-    // tslint:disable-next-line:no-console
-    console.log('editor-created', event)
+    // tslint:disable-next-line:no-console 
   }
 
   changedEditor(event: EditorChangeContent | EditorChangeSelection) {
-    // tslint:disable-next-line:no-console
-    console.log('editor-change', event)
+    // tslint:disable-next-line:no-console 
   }
 
   focus($event: any) {
-    // tslint:disable-next-line:no-console
-    console.log('focus', $event)
+    // tslint:disable-next-line:no-console 
     this.focused = true
     this.blurred = false
   }
 
   blur($event: any) {
-    // tslint:disable-next-line:no-console
-    console.log('blur', $event)
+    // tslint:disable-next-line:no-console 
     this.focused = false
     this.blurred = true
   }
@@ -238,8 +238,8 @@ export class ExamenesComponent implements OnInit {
   uploadFiles() {
 
     let i        = 0;
-    this.message = '';
-    console.log({ names  : this.selectedFiles} );
+    this.message = ''; 
+
     for ( i = 0; i < this.selectedFiles.length; i++) {
       this.upload( i, this.selectedFiles[i] );
     }
@@ -465,7 +465,9 @@ export class ExamenesComponent implements OnInit {
         await this.servicesExamen.CreateExamen(this.SelectedData).subscribe(
           async ( res : any ) => {
             if(res.status == true){
-              alert('Informacion Actualizada');
+              
+              this.toastr.success('Informacion Actualizada'); 
+
               this.SelectedData.fecha_inicio   = '';
               this.SelectedData.fecha_fin      = '';
               this.SelectedData.medico_id      = this.Medicos[0].user_id;
@@ -489,7 +491,7 @@ export class ExamenesComponent implements OnInit {
 
     }else{
  
-      alert(' Hay campos obligatorios ');
+      this.toastr.warning('Debe llenar todos los campos'); 
 
     }///
 
@@ -686,8 +688,9 @@ export class ExamenesComponent implements OnInit {
       this.servicesExamen.DeleteExamen(Data.IdExamen).subscribe(
         ( res : any ) => {
            if( res.status == true ){
-             alert('registro eliminado');
-             this.GetDelete()
+
+              this.toastr.success('Registro eliminado'); 
+              this.GetDelete()
            }   
         }
       )/// END SERVICE

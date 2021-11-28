@@ -1,5 +1,6 @@
 import { Component, OnInit, HostBinding } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 //// SERVICES
 
@@ -76,7 +77,8 @@ export class PersonalUsuariosComponent implements OnInit {
     private servicesSeveral  : SeveralServices,
     private servicePersonas  : Personas,
     private serviceUbicacion : Ubicaciones,
-    private serviceRoles     : RollServices
+    private serviceRoles     : RollServices,
+    private toastr           : ToastrService
     ) {}
 
     async ngOnInit() {
@@ -102,8 +104,7 @@ export class PersonalUsuariosComponent implements OnInit {
       await this.permisos.GetPermisos(this.UserProfile?.id).subscribe(
         (res:any) => {
            if(res.status == true) {
-             this.PermisosData = res.permisos;
-             console.log({ DataPermisos : this.PermisosData})
+             this.PermisosData = res.permisos; 
            }
         }
       )
@@ -111,8 +112,7 @@ export class PersonalUsuariosComponent implements OnInit {
       await this.permisos.GetOwnRoll(this.UserProfile?.id,'OwnRollData').subscribe(
         (res : any) => {
           if(res.status == true){
-            this.RollData = res.rollData;
-            console.log(this.RollData[0].Roll);
+            this.RollData = res.rollData; 
           }
         }
       )
@@ -162,8 +162,7 @@ export class PersonalUsuariosComponent implements OnInit {
     }
 
     async GetCiudades(){
-
-      //alert('data :'+ this.DataSend.Dep)
+ 
       this.serviceUbicacion.GetCiudad(this.DataSend.Dep).subscribe(
         ( res : any ) => {
           this.Ciudades = res.ciudades
@@ -175,18 +174,16 @@ export class PersonalUsuariosComponent implements OnInit {
 
     async ChangueRoll( event : any,  roll : any, id_user : string ){
 
-      event.stopPropagation();
-      console.log(roll.id)
+      event.stopPropagation(); 
       if(confirm('Deseas cambiar de roll a '+roll.name + ' ?..')){
 
         let Data = { 'id_user' : id_user,
-                      };
-        console.log(Data)
+                      }; 
 
         this.serviceRoles.UpdateRoll(roll.id, Data).subscribe(
           ( res : any ) => {
             if( res.status == true ){
-              alert('Registro Actualizado');
+              this.toastr.success('Registro Actualizado');  
               this.GetUsuarios();
             }
           }
@@ -209,20 +206,25 @@ export class PersonalUsuariosComponent implements OnInit {
         this.DataSend.Ciudad     == '' ||
         this.DataSend.TipoSangre == '' ||
         this.DataSend.Password   == ''         
-      ){
-        alert('Debe llenar todos los campos')
+      ){ 
+
+        this.toastr.warning('Debe llenar todos los campos'); 
+
       }else{
 
         this.servicePersonas.CrearPersonas(this.DataSend).subscribe(
           ( res : any ) => {
 
             if( res.trouble_status == true ){
-              alert( res.trouble );
+              this.toastr.error( res.trouble ); 
+ 
             }
 
             if( res.status == true ){
+             this.GetUsuarios(); 
+ 
+              this.toastr.success('Usuario creado'); 
 
-              alert('Usuario creado')
 
               this.DataSend.Nombre    = ''; 
               this.DataSend.Apellido  = '';

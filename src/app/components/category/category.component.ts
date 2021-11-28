@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 ///SERVICES
 
 import { CategoriasService } from '../../services/categorias.service';
+import { ToastrService } from 'ngx-toastr';
 
 
 /// MODELS  
@@ -14,6 +15,7 @@ import { Categories } from 'src/app/models/category';
   templateUrl: './category.component.html',
   styleUrls: ['./category.component.css']
 })
+
 export class CategoryComponent implements OnInit {
   data              : string = '';
   GetCategoriesData : any    = [];
@@ -30,7 +32,10 @@ export class CategoryComponent implements OnInit {
 
   pagination: any = [];
 
-  constructor(private categoriasservice:CategoriasService) { }
+  constructor(
+              private categoriasservice : CategoriasService, 
+              private toastr            : ToastrService
+    ) { }
 
   ngOnInit(): void {
     this.GetCategories()
@@ -74,8 +79,9 @@ export class CategoryComponent implements OnInit {
           this.GetCategories();
           $('#EditarProducto').modal('hide'); 
 
-        }else{
-          alert('Hubo un error');
+        }else{ 
+          this.toastr.error('Hubo un error'); 
+
         }    
 
      }, (err: any) => console.error(err)

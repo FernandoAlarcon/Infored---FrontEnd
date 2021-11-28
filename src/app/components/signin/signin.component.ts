@@ -41,8 +41,8 @@ export class SigninComponent implements OnInit {
         },() => {
           this.authState.setAuthState(true);
           this.loginForm.reset()
-          this.router.navigate(['/products']);
           window.location.href = 'profile';
+          //this.router.navigate(['/products']);
 
         }
       );

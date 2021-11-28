@@ -10,6 +10,7 @@ import * as bootstrap from "bootstrap";
 import { Pagination } from 'src/app/models/pagination';
 import { Products } from 'src/app/models/products';0
 import { ActivatedRoute } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-products',
@@ -43,7 +44,9 @@ export class ProductsComponent implements OnInit {
   //@ViewChild(MatPaginator) paginator: MatPaginator;
   constructor(  private productsservice:ProductsService, 
                 private activatedRoute: ActivatedRoute, 
-                private categoriasservice:CategoriasService ) { }
+                private categoriasservice:CategoriasService,
+                private toastr           : ToastrService
+               ) { }
 
   ngOnInit(): void {
     this.getProducts();
@@ -94,6 +97,8 @@ export class ProductsComponent implements OnInit {
         this.NewProducts.precio      = '';
         this.NewProducts.categoria   = ''; 
         //this.router.navigate(['/clientes']);
+        this.toastr.success('Registro agregado'); 
+
         $('#NuevoProducto').modal('hide');
       },
       err => console.log(err)
@@ -137,10 +142,13 @@ export class ProductsComponent implements OnInit {
           this.products.categoria   = ''; 
   
           this.getProducts();
+          this.toastr.success('Registro agregado'); 
+
           $('#EditarProducto').modal('hide'); 
 
         }else{
-          alert('Hubo un error');
+          this.toastr.error('No se pudo agregar'); 
+
         }    
 
      }, (err: any) => console.error(err)

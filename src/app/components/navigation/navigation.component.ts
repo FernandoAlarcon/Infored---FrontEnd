@@ -89,8 +89,7 @@ export class NavigationComponent implements OnInit {
     await this.permisos.GetPermisos(this.UserProfile?.id).subscribe(
       (res:any) => {
          if(res.status == true) {
-           this.PermisosData = res.permisos;
-           console.log({ DataPermisos : this.PermisosData})
+           this.PermisosData = res.permisos; 
          }
       }
     )
@@ -98,8 +97,7 @@ export class NavigationComponent implements OnInit {
     await this.permisos.GetOwnRoll(this.UserProfile?.id,'OwnRollData').subscribe(
       (res : any) => {
         if(res.status == true){
-          this.RollData = res.rollData;
-          console.log(this.RollData[0].Roll);
+          this.RollData = res.rollData; 
         }
       }
     )
@@ -110,8 +108,8 @@ export class NavigationComponent implements OnInit {
   signOut() {
     this.auth.setAuthState(false);
     this.token.removeToken();
-    this.router.navigate(['home']);
     window.location.href = 'home-index';
+    this.router.navigate(['home-index']);
 
   }
 

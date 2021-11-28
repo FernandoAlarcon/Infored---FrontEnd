@@ -11,6 +11,8 @@ import { Citas }            from 'src/app/services/services-data/citas.services'
 import * as moment from 'moment'; 
 import { CalendarOptions } from '@fullcalendar/angular';  
 import { async } from '@angular/core/testing';
+import { ToastrService } from 'ngx-toastr';
+
 //import { MatCalendar } from '@angular/material';
  
 
@@ -107,7 +109,8 @@ export class CitasComponent implements OnInit {
                 private servicesExamen : ExamenesServices,
                 private services       : SeveralServices,
                 private renderer       : Renderer2,
-                private CitasService   : Citas
+                private CitasService   : Citas,
+                private toastr         : ToastrService
               ) { }
 
   async ngOnInit(){
@@ -286,8 +289,9 @@ export class CitasComponent implements OnInit {
         await this.servicesExamen.CreateExamen(this.SelectedData).subscribe(
           ( res : any ) => {
             if(res.status == true){
+ 
+              this.toastr.success('Registro Actualizado'); 
 
-              alert('Registro agregado');
 
               this.SelectedData.fecha_inicio   = '';
               this.SelectedData.fecha_fin      = '';
@@ -305,7 +309,7 @@ export class CitasComponent implements OnInit {
 
     }else{
 
-      alert(' Hay campos obligatorios ');
+              this.toastr.warning(' Hay campos obligatorios ');        
 
     }///
 
@@ -313,15 +317,14 @@ export class CitasComponent implements OnInit {
   }//// FINISH CrearCitas
 
   async ListEliminar(){
-    
-    //alert('se jue cole');
+     
     await this.CitasService.GetCitas( this.UserProfile?.id,  this.RollData[0].Roll, '2', this.SearchDelete).subscribe(
       async ( res : any ) => {
         
         this.AllCitas = res.citas;   
  
         if( this.AllCitas.length == 0 ){
-          //await alert('No hay citas con esas caracteristicas')
+          
         }else{
           //this.calendarOptions;
         }
@@ -338,10 +341,13 @@ export class CitasComponent implements OnInit {
 
           if( res.status == true ){
             this.ListEliminar();
-            this.ListUpdate();
-            alert('Registro eliminado');
+            this.ListUpdate();  
+            this.toastr.success('Registro Eliminado'); 
+ 
           }else{
-            alert('hubo algunos problemas');
+            
+            this.toastr.error('Hubo algunos problemas'); 
+
           }
 
         }
@@ -364,7 +370,9 @@ export class CitasComponent implements OnInit {
         if( res.status == true ){
           this.ListUpdate()
         }else{
-          alert('Sucedio algo');
+          
+          this.toastr.success('Sucedio algo'); 
+
         }
 
       }
@@ -373,15 +381,14 @@ export class CitasComponent implements OnInit {
   }
 
   async ListUpdate(){
-    
-    //alert('se jue cole');
+     
     await this.CitasService.GetCitas( this.UserProfile?.id,  this.RollData[0].Roll, '2', this.SearchUpdate).subscribe(
       async ( res : any ) => {
          
         this.AllCitas = res.citas;   
  
         if( this.AllCitas.length == 0 ){
-          await alert('No hay citas con esas caracteristicas')
+            await this.toastr.success('No hay citas con esas caractericas');  
         }else{
           //this.calendarOptions;
         }
