@@ -203,7 +203,7 @@ export class CalendarioComponent  {
   async ListCitas(){
     
     //alert('se jue cole');
-    await this.CitasService.GetCitas(this.id_usuario,  this.roll, '1', '').subscribe(
+    await this.CitasService.GetCitasCalendario(this.id_usuario,  this.roll, '1', '').subscribe(
       async ( res : any ) => {
         
         this.AllCitas = await res.citas; 

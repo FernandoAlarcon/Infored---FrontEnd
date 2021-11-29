@@ -35,7 +35,7 @@
                             
                             <ng-container *ngFor=" let Accion of Acciones "> 
 
-                                    <div *ngIf="Accion.id == 1" class="tab-pane fade show active" id={{Accion.id}} role="tabpanel" aria-labelledby="home-tab">
+                                    <div *ngIf="Accion.accion == 'Crear'      && Accion.status == true " class="tab-pane fade show active" id={{Accion.id}} role="tabpanel" aria-labelledby="home-tab">
                                         <div style="text-align: center;" >
                                             <h3>
                                                 Nueva Cita 
@@ -142,13 +142,13 @@
                                            
                                         </div> 
                                     </div>
-                                    <div *ngIf="Accion.id == 2" class="tab-pane fade " id={{Accion.id}} role="tabpanel" aria-labelledby="home-tab">
+                                    <div *ngIf="Accion.accion == 'Listar'     && Accion.status == true " class="tab-pane fade " id={{Accion.id}} role="tabpanel" aria-labelledby="home-tab">
                                         <div>
                                             <app-calendario [id_usuario]="UserProfile?.id" [roll]="RollData[0].Roll" ></app-calendario>
                                             <br><br><br><br><br>
                                         </div>
                                     </div>
-                                    <div *ngIf="Accion.id == 3" class="tab-pane fade " id={{Accion.id}} role="tabpanel" aria-labelledby="home-tab">
+                                    <div *ngIf="Accion.accion == 'Eliminar'   && Accion.status == true " class="tab-pane fade " id={{Accion.id}} role="tabpanel" aria-labelledby="home-tab">
                                        <div class="col-md-12 row" style="text-align: center;" >
                                           <div class="col-md-4"></div>
                                           <div class="col-md-4">
@@ -189,9 +189,39 @@
                                                  </tbody>
                                              </table>
                                           </div>
+                                          <br><br><br>
+                                          <div class="pagination-box row" style=" width: 100%;" >
+                                             <div class="col-md-1" ></div>
+                                    
+                                             <div class="col-md-3"  >
+                                                <svg *ngIf='pagination1.current_page > 1' (click)="changePage1(pagination1.current_page - 1)"  width="25" height="25" fill="currentColor" class="pointer bi bi-arrow-left-circle-fill" viewBox="0 0 16 16">
+                                                   <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/>
+                                                </svg>
+                                                <svg *ngIf='pagination1.length == 0' style="color: grey;" width="25" height="25" fill="currentColor" class="bi bi-arrow-left-circle-fill" viewBox="0 0 16 16">
+                                                   <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/>
+                                                </svg>
+                                             </div>
+                                             <div class="col-md-4" style="text-align: center;" >
+                                                
+                                             <div>
+                                                   Page {{ pagination1.current_page }} <br>
+                                                   <p style=" color: grey; " >
+                                                      Total {{ pagination1.last_page }}
+                                                   </p>
+                                             </div>
+
+                                             </div>
+                                             <div class="col-md-3"  >
+                                             <svg *ngIf='pagination1.current_page < pagination1.last_page' (click)="changePage1(pagination1.current_page + 1)" width="25" height="25" fill="currentColor" class="pointer bi bi-arrow-right-circle-fill" viewBox="0 0 16 16">
+                                                <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"/>
+                                             </svg>
+                                             </div>
+                                             
+                                             <div class="col-md-1" ></div>
+                                          </div>
                                        </div>
                                     </div>
-                                    <div *ngIf="Accion.id == 4" class="tab-pane fade " id={{Accion.id}} role="tabpanel" aria-labelledby="home-tab">
+                                    <div *ngIf="Accion.accion == 'Actualizar' && Accion.status == true " class="tab-pane fade " id={{Accion.id}} role="tabpanel" aria-labelledby="home-tab">
                                        <div class="col-md-12 row" style="text-align: center;" >
                                           <div class="col-md-4"></div>
                                           <div class="col-md-4">
@@ -264,6 +294,36 @@
                                                     </tr>
                                                  </tbody>
                                              </table>
+                                          </div>
+                                          <br><br><br>
+                                          <div class="pagination-box row" style=" width: 100%;" >
+                                             <div class="col-md-1" ></div>
+                                     
+                                             <div class="col-md-3"  >
+                                                <svg *ngIf='pagination2.current_page > 1' (click)="changePage2(pagination2.current_page - 1)"  width="25" height="25" fill="currentColor" class="pointer bi bi-arrow-left-circle-fill" viewBox="0 0 16 16">
+                                                   <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/>
+                                                </svg>
+                                                <svg *ngIf='pagination2.length == 0' style="color: grey;" width="25" height="25" fill="currentColor" class="bi bi-arrow-left-circle-fill" viewBox="0 0 16 16">
+                                                   <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/>
+                                                </svg>
+                                             </div>
+                                             <div class="col-md-4" style="text-align: center;" >
+                                                
+                                               <div>
+                                                   Page {{ pagination2.current_page }} <br>
+                                                   <p style=" color: grey; " >
+                                                      Total {{ pagination2.last_page }}
+                                                   </p>
+                                               </div>
+            
+                                             </div>
+                                             <div class="col-md-3"  >
+                                               <svg *ngIf='pagination2.current_page < pagination2.last_page' (click)="changePage2(pagination2.current_page + 1)" width="25" height="25" fill="currentColor" class="pointer bi bi-arrow-right-circle-fill" viewBox="0 0 16 16">
+                                                 <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"/>
+                                               </svg>
+                                             </div>
+                                             
+                                             <div class="col-md-1" ></div>
                                           </div>
                                        </div>
                                     </div> 

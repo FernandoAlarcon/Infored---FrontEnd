@@ -9,6 +9,7 @@ import { Permisos } from '../../services/services-data/user-permisos.service';
 import { Usuarios } from '../../services/services-data/usuarios.services';
 
 import { AuthStateService } from '../../shared/auth-state.service';
+import { ToastrService } from 'ngx-toastr';
 
 export class User {
   id    : any = 0;
@@ -55,21 +56,27 @@ export class NavigationComponent implements OnInit {
               private router         : Router,
               private permisos       : Permisos,
               private activatedRoute : ActivatedRoute,
-              private userService    : Usuarios  ) {}
+              private userService    : Usuarios,
+              private toastr         : ToastrService
+              ) {}
 
   ngOnInit() {
 
     this.auth.userAuthState.subscribe( ( val : any ) => {
         this.isSignedIn = val;
-
-        if(!this.isSignedIn || val.message == 'Unauthenticated.' || val.message == 'Unauthenticated'  ){
+        
+        if(!this.isSignedIn || val.message == 'Unauthenticated.' || val.message == 'Unauthenticated' || val == false ){
           this.signOut();
         }
+    },(error) => { 
+      this.toastr.error('Tu session ah expirado'); 
+      this.signOut();
     });
 
     this.authService.profileUser().subscribe((data:any) => {
 
-      if ( data.message == 'Unauthenticated.' || data.message == 'Unauthenticated' || data.status == "Unauthorized" ) {
+       
+      if ( data.id == undefined || data.id == '' || data.message == 'Unauthenticated.' || data.message == 'Unauthenticated' || data.status == "Unauthorized" ) {
         this.signOut();
       }else{
 
@@ -79,7 +86,10 @@ export class NavigationComponent implements OnInit {
 
       }
 
-    })
+    },(error) => { 
+      this.toastr.error('Tu session ah expirado'); 
+      this.signOut();
+    });
 
         
   } /// FINAL ngOnInit
@@ -108,8 +118,8 @@ export class NavigationComponent implements OnInit {
   signOut() {
     this.auth.setAuthState(false);
     this.token.removeToken();
-    window.location.href = 'home-index';
-    this.router.navigate(['home-index']);
+    window.location.href = 'home';
+    this.router.navigate(['home']);
 
   }
 

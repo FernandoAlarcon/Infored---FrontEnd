@@ -13,7 +13,11 @@ export class Citas {
     constructor(private http: HttpClient) {} 
 
     
-    GetCitas(id_user : Object, roll: Object, mood : any, DataSearch : string):Observable<any>{
+    GetCitas(id_user : Object, roll: Object, mood : any, DataSearch : string, page : any ):Observable<any>{
+        return this.http.get(`${GLOBAL.UrlLocalTest}/api/examenes-estado?roll=${roll}&id_user=${id_user}&mood=${mood}&data=${DataSearch}&page=${page}`);
+    }
+
+    GetCitasCalendario(id_user : Object, roll: Object, mood : any, DataSearch : string ):Observable<any>{
         return this.http.get(`${GLOBAL.UrlLocalTest}/api/examenes-estado?roll=${roll}&id_user=${id_user}&mood=${mood}&data=${DataSearch}`);
     }
 

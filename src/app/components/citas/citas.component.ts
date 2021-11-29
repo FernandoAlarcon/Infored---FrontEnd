@@ -73,6 +73,13 @@ export class CitasComponent implements OnInit {
   ListExamenes     : any  = [];
   AllCitas         : any  = [];
 
+  //////// PAGINATION
+
+  pagination1  : any  = [];   
+  pagination2  : any  = [];   
+
+  //////// END PAGINATION
+
 
   RollData     : any  = [];
   Acciones     : any  = [];
@@ -184,9 +191,9 @@ export class CitasComponent implements OnInit {
 
   CreateCita():void{
 
-    this.GetTecnicos('57');
-    this.GetMedicos('58');
-    this.GetPacientes('62');
+    this.GetTecnicos('Tecnico');
+    this.GetMedicos('Medico');
+    this.GetPacientes('Paciente');
     this.GetClinicas();
 
   }//// FINISH CreateCita
@@ -318,10 +325,12 @@ export class CitasComponent implements OnInit {
 
   async ListEliminar(){
      
-    await this.CitasService.GetCitas( this.UserProfile?.id,  this.RollData[0].Roll, '2', this.SearchDelete).subscribe(
+    await this.CitasService.GetCitas( this.UserProfile?.id,  this.RollData[0].Roll, '2', this.SearchDelete, this.pagination1.current_page).subscribe(
       async ( res : any ) => {
         
-        this.AllCitas = res.citas;   
+        this.AllCitas    = res.citas.data;   
+        this.pagination1 = res.pagination   
+
  
         if( this.AllCitas.length == 0 ){
           
@@ -382,11 +391,12 @@ export class CitasComponent implements OnInit {
 
   async ListUpdate(){
      
-    await this.CitasService.GetCitas( this.UserProfile?.id,  this.RollData[0].Roll, '2', this.SearchUpdate).subscribe(
+    await this.CitasService.GetCitas( this.UserProfile?.id,  this.RollData[0].Roll, '2', this.SearchUpdate, this.pagination2.current_page).subscribe(
       async ( res : any ) => {
          
-        this.AllCitas = res.citas;   
- 
+        this.AllCitas    = res.citas.data;   
+        this.pagination2 = res.pagination   
+
         if( this.AllCitas.length == 0 ){
             await this.toastr.success('No hay citas con esas caractericas');  
         }else{
@@ -396,5 +406,15 @@ export class CitasComponent implements OnInit {
     )
     //this.ngAfterViewInit();
   }
+
+  changePage1(page: number):void{
+    this.pagination1.current_page = page;
+    this.ListEliminar();
+  }//// FINISH changePage1
+
+  changePage2(page: number):void{
+    this.pagination2.current_page = page;
+    this.ListUpdate();
+  }//// FINISH changePage1
 
 }

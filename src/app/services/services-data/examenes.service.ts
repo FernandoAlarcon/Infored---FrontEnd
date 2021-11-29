@@ -52,8 +52,8 @@ export class ExamenesServices {
         return this.http.get(`${GLOBAL.UrlLocalTest}/api/examenes-adjuntos/${filename}`);
     }
 
-    GetExamenes(id_user : Object, roll: Object, mood : any, DataSearch : string, id_examenes : any ):Observable<any>{
-        return this.http.get(`${GLOBAL.UrlLocalTest}/api/examenes?roll=${roll}&id_user=${id_user}&mood=${mood}&data=${DataSearch}&id_examen=${id_examenes}`);
+    GetExamenes(id_user : Object, roll: Object, mood : any, DataSearch : string, id_examenes : any, page : any ):Observable<any>{
+        return this.http.get(`${GLOBAL.UrlLocalTest}/api/examenes?roll=${roll}&id_user=${id_user}&mood=${mood}&data=${DataSearch}&id_examen=${id_examenes}&page=${page}`);
     }
 
     DeleteExamen( id_examenes : any ):Observable<any>{

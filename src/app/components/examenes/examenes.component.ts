@@ -94,7 +94,9 @@ export class ExamenesComponent implements OnInit {
 
   ///LISTAR
 
-  pagination       : any = [];
+  pagination        : any = [];
+  pagination1       : any = [];
+  pagination2       : any = [];
 
   /// END LISTAR
   
@@ -327,9 +329,9 @@ export class ExamenesComponent implements OnInit {
 
   CreateAccion():void{
 
-    this.GetTecnicos('57');
-    this.GetMedicos('58');
-    this.GetPacientes('62');
+    this.GetTecnicos('Tecnico');
+    this.GetMedicos('Medico');
+    this.GetPacientes('Paciente');
     this.GetClinicas();
     this.GetDataExamen();
 
@@ -447,6 +449,16 @@ export class ExamenesComponent implements OnInit {
   changePage(page: number):void{
     this.pagination.current_page = page;
     this.SearcExamenes();
+  }//// FINISH changePage
+
+  changePage1(page: number):void{
+    this.pagination1.current_page = page;
+    this.DataListExamen();
+  }//// FINISH changePage1
+
+  changePage2(page: number):void{
+    this.pagination2.current_page = page;
+    this.GetDelete();
   }//// FINISH changePage
 
   async CrearExamen() {
@@ -586,10 +598,11 @@ export class ExamenesComponent implements OnInit {
     
     this.DataInfoExamenes = []; 
 
-    await this.servicesExamen.GetExamenes(this.UserProfile?.id, this.RollData[0].Roll, '2', this.SearchExamens, this.idExamenSelected).subscribe(
+    await this.servicesExamen.GetExamenes(this.UserProfile?.id, this.RollData[0].Roll, '2', this.SearchExamens, this.idExamenSelected, this.pagination1.current_page).subscribe(
         ( res : any ) => {
 
-            this.DataInfoExamenes  = res.examenes;   
+            this.DataInfoExamenes  = res.examenes.data;  
+            this.pagination1       = res.pagination;
         }
     )
     
@@ -599,10 +612,12 @@ export class ExamenesComponent implements OnInit {
     
     this.DataListDelete      = []; 
     this.CharguerDataDelete  = false;
-    await this.servicesExamen.GetExamenes(this.UserProfile?.id, this.RollData[0].Roll, '2', this.SearchExamensDelete, this.idExamenSelected).subscribe(
+    await this.servicesExamen.GetExamenes(this.UserProfile?.id, this.RollData[0].Roll, '2', this.SearchExamensDelete, this.idExamenSelected, this.pagination2.current_page).subscribe(
         ( res : any ) => {
 
-            this.DataListDelete      = res.examenes;   
+            this.DataListDelete      = res.examenes.data;   
+            this.pagination2         = res.pagination;
+
             this.CharguerDataDelete  = true;
 
         }
