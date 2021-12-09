@@ -70,6 +70,9 @@ import { NavigationHomeComponent } from './components/navigation-home/navigation
  
 import { ToastrModule } from 'ngx-toastr';
 
+//// DATA TABLES
+import { DataTablesModule } from "angular-datatables";
+
   FullCalendarModule.registerPlugins([ // register FullCalendar plugins
     dayGridPlugin,
     interactionPlugin
@@ -134,7 +137,8 @@ import { ToastrModule } from 'ngx-toastr';
       useFactory: adapterFactory,
     }),
     NgbModule,
-    ToastrModule.forRoot()
+    ToastrModule.forRoot(),
+    DataTablesModule
   ],
   //declarations: [AppComponent],
   exports: [AppComponent],

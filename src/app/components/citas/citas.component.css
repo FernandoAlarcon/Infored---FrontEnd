@@ -12,6 +12,9 @@
     text-align: center;
   }
 
+  .pointer{
+    cursor: pointer;
+  }
 
   .btn-circle.btn-xl {
       width: 70px;

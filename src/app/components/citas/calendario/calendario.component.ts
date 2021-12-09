@@ -45,21 +45,21 @@ export class CalendarioComponent  {
   } | undefined;
 
   actions: CalendarEventAction[] = [
-    {
-      label: '<i class="fas fa-fw fa-pencil-alt"></i>',
-      a11yLabel: 'Edit',
-      onClick: ({ event }: { event: CalendarEvent }): void => {
-        this.handleEvent('Edited', event);
-      },
-    },
-    {
-      label: '<i class="fas fa-fw fa-trash-alt"></i>',
-      a11yLabel: 'Delete',
-      onClick: ({ event }: { event: CalendarEvent }): void => {
-        this.events = this.events.filter((iEvent) => iEvent !== event);
-        this.handleEvent('Deleted', event);
-      },
-    },
+    // {
+    //   label: '<i class="fas fa-fw fa-pencil-alt"></i>',
+    //   a11yLabel: 'Edit',
+    //   onClick: ({ event }: { event: CalendarEvent }): void => {
+    //     this.handleEvent('Edited', event);
+    //   },
+    // },
+    // {
+    //   label: '<i class="fas fa-fw fa-trash-alt"></i>',
+    //   a11yLabel: 'Delete',
+    //   onClick: ({ event }: { event: CalendarEvent }): void => {
+    //     this.events = this.events.filter((iEvent) => iEvent !== event);
+    //     this.handleEvent('Deleted', event);
+    //   },
+    // },
   ];
 
   refresh: Subject<any> = new Subject();
@@ -110,6 +110,9 @@ export class CalendarioComponent  {
  
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
+
+    //console.log('Data '+ date);
+
     if (isSameMonth(date, this.viewDate)) {
       if (
         (isSameDay(this.viewDate, date) && this.activeDayIsOpen === true) ||
@@ -142,6 +145,9 @@ export class CalendarioComponent  {
   }
 
   handleEvent(action: string, event: CalendarEvent): void {
+
+    
+
     this.modalData = { event, action };
     this.modal.open(this.modalContent, { size: 'lg' });
   }
@@ -150,16 +156,17 @@ export class CalendarioComponent  {
     this.events = [
       ...this.events,
       {
+
         title: 'New event',
         start: startOfDay(new Date()),
         end: endOfDay(new Date()),
         color: colors.red,
         draggable: true,
-        actions: this.actions,
+        //actions: this.actions,
         resizable: {
           beforeStart: true,
           afterEnd: true,
-        },
+        }
       },
     ];
   }
@@ -216,13 +223,14 @@ export class CalendarioComponent  {
                 title: element.title,
                 start: new Date(element.start),//startOfDay(element.start),
                 end:   new Date(element.end),//endOfDay(element.emd),
-                actions: this.actions,    
+                actions: this.actions,  
+                
                 color: element.color,
                 draggable: true,  
                 resizable: {
                   beforeStart: true,
                   afterEnd: true,
-                },
+                } 
               },
             ];
 

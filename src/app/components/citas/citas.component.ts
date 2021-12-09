@@ -45,7 +45,7 @@ export class User {
 })
 export class CitasComponent implements OnInit {
   //AfterViewInit
-
+  dtOptions: DataTables.Settings = {};
   /////////////////////////////////////////////////////////
  
    //calendar: MatCalendar<moment.Moment>;
@@ -72,6 +72,7 @@ export class CitasComponent implements OnInit {
 
   ListExamenes     : any  = [];
   AllCitas         : any  = [];
+  AllCitasUpdate   : any  = [];
 
   //////// PAGINATION
 
@@ -176,14 +177,17 @@ export class CitasComponent implements OnInit {
 
       let elements = this.Acciones[index];
 
-      if ( elements.id == 1 && elements.status == true && elements.accion == "Crear" ) {
+      if ( elements.status == true && elements.accion == "Crear" ) {
         await this.CreateCita();
         await this.ListTipoExamenes();
-      }else if ( elements.id == 2 && elements.status == true && elements.accion == "Listar" ){
+      }else if ( elements.status == true && elements.accion == "Listar" ){
         //await this.ListCitas();
-      }else if ( elements.id == 3 && elements.status == true && elements.accion == "Eliminar" ){
+      }else if ( elements.status == true && elements.accion == "Eliminar" ){
         await this.ListEliminar();
+      }else if ( elements.status == true && elements.accion == "Actualizar" ){
+        await this.ListUpdate();
       }
+
 
     }
 
@@ -377,6 +381,7 @@ export class CitasComponent implements OnInit {
       ( res : any ) => {
           
         if( res.status == true ){
+          this.toastr.success('Cita Actualizada'); 
           this.ListUpdate()
         }else{
           
@@ -391,13 +396,14 @@ export class CitasComponent implements OnInit {
 
   async ListUpdate(){
      
+    console.log('get Update');
     await this.CitasService.GetCitas( this.UserProfile?.id,  this.RollData[0].Roll, '2', this.SearchUpdate, this.pagination2.current_page).subscribe(
       async ( res : any ) => {
          
-        this.AllCitas    = res.citas.data;   
-        this.pagination2 = res.pagination   
+        this.AllCitasUpdate  = res.citas.data;   
+        this.pagination2     = res.pagination   
 
-        if( this.AllCitas.length == 0 ){
+        if( this.AllCitasUpdate.length == 0 ){
             await this.toastr.success('No hay citas con esas caractericas');  
         }else{
           //this.calendarOptions;

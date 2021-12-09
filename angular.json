@@ -42,7 +42,8 @@
               "./node_modules/quill/dist/quill.snow.css",
               "./node_modules/quill-emoji/dist/quill-emoji.css",
               "./node_modules/angular-calendar/css/angular-calendar.css",
-              "./node_modules/ngx-toastr/toastr.css"
+              "./node_modules/ngx-toastr/toastr.css",
+              "./node_modules/datatables.net-dt/css/jquery.dataTables.css"
               //"node_modules/quill-mention/dist/quill.mention.min.css"
             ],
             "scripts": [
@@ -53,7 +54,9 @@
               "./node_modules/jquery/dist/jquery.min.js",
               "./node_modules/@popperjs/core/dist/umd/popper.min.js",
               "./node_modules/bootstrap/dist/js/bootstrap.min.js",
-              "./node_modules/sweetalert2/dist/sweetalert2.js"
+              "./node_modules/sweetalert2/dist/sweetalert2.js",
+              "./node_modules/jquery/dist/jquery.js",
+              "./node_modules/datatables.net/js/jquery.dataTables.js"
             ]
           },
           "configurations": {

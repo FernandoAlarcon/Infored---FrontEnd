@@ -195,6 +195,7 @@ export class ExamenesComponent implements OnInit {
       this.GetTipoExamenes();
       this.GetPermisos();
     });
+     
 
   }/// FINISH ngOnInit
 
@@ -265,12 +266,16 @@ export class ExamenesComponent implements OnInit {
       ( err : any ): void => {
         this.progressInfo[index].value = 0;
         this.message                   = 'No se puede subir el archivo ' + file.name + ', no cumple las caracteristicas';
+        this.selectedFiles             = [];
     });
 
     $('#fileInput').val('');
     if (this.progressInfo[index].value == 100) {
       this.progressInfo = [];
     }
+    this.message        = "";
+    this.selectedFiles  = [];
+
   }///// FINISH upload
 
   deleteFile(filename: string) {
@@ -343,12 +348,12 @@ export class ExamenesComponent implements OnInit {
 
       let elements = this.Acciones[index];
 
-      if ( elements.id == 1 && elements.status == true && elements.accion == "Crear" ) {
+      if (  elements.status == true && elements.accion == "Crear" ) {
         await this.CreateAccion();
-      }else if ( elements.id == 2 && elements.status == true && elements.accion == "Listar" ){
+      }else if (  elements.status == true && elements.accion == "Listar" ){
         //await this.ListExamenes();
         this.DataListExamen();
-      }else if ( elements.id == 3 && elements.status == true && elements.accion == "Eliminar" ){
+      }else if (  elements.status == true && elements.accion == "Eliminar" ){
         this.GetDelete();
       }
 
@@ -510,6 +515,15 @@ export class ExamenesComponent implements OnInit {
 
   }//// FINISH CrearExamen
 
+  async addImageProcess(src: string) {
+    return new Promise((resolve, reject) => {
+      let img = new Image();
+      img.src = src;
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+    });
+  }
+
   async DownloadExam( Data : any ){
 
     await this.servicesExamen.getFiles(Data.IdExamen).subscribe(
@@ -531,43 +545,55 @@ export class ExamenesComponent implements OnInit {
         doc.text(this.ExamenSelected + ' ' + Data.paciente,  50,90);
 
             var Examen    = this.ExamenSelected.replace(/ /g, "_");
-            await Adjunto.forEach(( element : any ) => {
+            await Adjunto.forEach( async ( element : any, key : any ) => {
 
                 
                 var foto          = element.adjunto;
                 var Terminacion   = foto.split(".");
+                var Nombre        = key+Terminacion[0];
                 var pathe         = this.global.UrlLocalTest + "/adjuntos/examenes/" + element.adjunto;
-                var Nombre        = Examen + '_' + c;
 
-                const reader   = new FileReader();
-                reader.onload  = (e: any) => {
-                const image    = new Image();
-                image.src      = pathe;
-                image.onload   = rs => {
-        
-                  // Return Base64 Data URL
-                  let imgBase64Path = pathe;
+                let image = new Promise((resolve, reject) => {
+                  var img = new Image(),
+                  canvas = document.createElement("canvas"),
+                  ctx    = canvas.getContext("2d"),
+                  src    = pathe;
+                  img.onload = () => resolve(img);
+                  img.src = pathe; 
+                  
+                  img.onerror = reject;
+                  let imgData = `<img [src]="${pathe}"/>`;
+                  let terminacion = String(Terminacion[1]);
+                  // console.log(img);
                   doc.addPage();
-                  doc.addImage( imgBase64Path, Terminacion[1], pageWidth - 50, 30, 14, 14, Nombre );
+                  // //doc.addImage(image, terminacion, 5, 5, 0, 0);
+                  //doc.addImage( img, , pageWidth - 50, 30, 14, 14, Nombre );
+                  doc.addImage( imgData, terminacion, 5, 5, 0, 0);
+                });
 
-                  };
-                };
+                //let image = await this.addImageProcess(pathe);
 
-                /////
-                // async (pathe : any, callback : any) => {
+                // doc.addPage();
+                // //doc.addImage(image, Terminacion[1], 5, 5, 0, 0);
+                // doc.addImage( image, Terminacion[1], pageWidth - 50, 30, 14, 14, Nombre );
+                // if (key !== Adjunto.length - 1) {
+                //   doc.addPage();
+                // } 
+                // const reader   = new FileReader();
+                // reader.onload  = (e: any) => {
+                // const image    = new Image();
+                // image.src      = pathe;
+                // image.onload   = rs => {
+        
+                //   // Return Base64 Data URL
+                //   let imgBase64Path = pathe;
+                //   doc.addPage();
+                //   doc.addImage( imgBase64Path, Terminacion[1], pageWidth - 50, 30, 14, 14, Nombre );
 
-                //       var URL_IMAGE = new Image();
+                //   };
+                // };
 
-                //       URL_IMAGE.onerror = await function() {
-                //           console.log('Cannot load image: "'+pathe+'"');
-                //       };
-
-                //       URL_IMAGE.onload  = await function() {
-                //           URL_IMAGE.src = pathe;
-                //           doc.addPage();
-                //           doc.addImage( URL_IMAGE, Terminacion[1], pageWidth - 50, 30, 14, 14, Nombre );
-                //       };
-                //       c++;
+              
 
                 // }/// FINISH DATA
           });
@@ -645,7 +671,11 @@ export class ExamenesComponent implements OnInit {
       behavior: 'smooth'
     });
 
-    let elementReference = document.querySelector('#quilEditor');
+    //window.scrollTo('quilEditor');
+    // let el = document.getElementById('quilEditor');
+    // el.scrollIntoView();
+
+    let elementReference = document.querySelector('quilEditor');
     if (elementReference instanceof HTMLElement) {
         elementReference.focus();
     }

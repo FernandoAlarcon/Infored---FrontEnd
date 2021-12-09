@@ -34,14 +34,14 @@ export class SigninComponent implements OnInit {
       this.authService.signin(this.loginForm.value).subscribe(
         result => {
           this.responseHandler(result);
-          window.location.href = 'profile';
+          window.location.href = 'home-index';
         },
         error => {
           this.errors = error.error;
         },() => {
           this.authState.setAuthState(true);
           this.loginForm.reset()
-          window.location.href = 'profile';
+          window.location.href = 'home-index';
           //this.router.navigate(['/products']);
 
         }

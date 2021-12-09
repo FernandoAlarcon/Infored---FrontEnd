@@ -17,6 +17,10 @@ export class SeveralServices {
         return this.http.get(`${GLOBAL.UrlLocalTest}/api/tipo-examenes?data=${data}`);
     }
 
+    GetExamenesEstadisticas(data : string):Observable<any>{
+        return this.http.get(`${GLOBAL.UrlLocalTest}/api/tipo-examenes?mood=${data}`);
+    }
+
     GetExamenes(idExamen : string):Observable<any>{
         return this.http.get(`${GLOBAL.UrlLocalTest}/api/tipo-examenes?idExamen=${idExamen}`);
     }
