@@ -21,12 +21,14 @@ import { PersonalUsuariosComponent } from './components/personal-usuarios/person
 
 const routes: Routes = [
 
-  { path: '',           redirectTo: '/home', pathMatch: 'full' },
-  { path: '*',          redirectTo: '/home', pathMatch: 'full' },
+  { path: '',           redirectTo: '/login', pathMatch: 'full' },
+  { path: '*',          redirectTo: '/login', pathMatch: 'full' },
+  { path: 'home',          redirectTo: '/login', pathMatch: 'full' },
+
   { path: 'products',   redirectTo: '/home-index', pathMatch: 'full' },
 
   { path: 'home-index', component: IndexHomeComponent },
-  { path: 'home',       component: HomeComponent },
+  //{ path: 'home',       component: HomeComponent },
   { path: 'profile',    component: UserProfileComponent },
   { path: 'register',   component: SignupComponent },
   { path: 'login',      component: SigninComponent },
