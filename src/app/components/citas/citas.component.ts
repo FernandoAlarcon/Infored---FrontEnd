@@ -395,8 +395,7 @@ export class CitasComponent implements OnInit {
   }
 
   async ListUpdate(){
-     
-    console.log('get Update');
+      
     await this.CitasService.GetCitas( this.UserProfile?.id,  this.RollData[0].Roll, '2', this.SearchUpdate, this.pagination2.current_page).subscribe(
       async ( res : any ) => {
          

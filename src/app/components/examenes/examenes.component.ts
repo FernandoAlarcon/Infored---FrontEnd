@@ -108,17 +108,18 @@ export class ExamenesComponent implements OnInit {
   RollData         : any = [];
   Acciones         : any = [];
   DataListDelete   : any = [];
-
+  
   GetPictures      : any = [];
   Tecnicos         : any = [];
   Medicos          : any = [];
   Pacientes        : any = [];
   Clinicas         : any = [];
-
+  
   ExamenesGet      : any = [];
   AdjuntosGet      : any = [];
-
-  SelectedData     : any = {
+  
+  DataExamenAdjuntos : any = [];
+  SelectedData       : any = {
       
       idExamen         : '',
       mood             : '2',
@@ -310,7 +311,6 @@ export class ExamenesComponent implements OnInit {
   async GetActions() {
     await this.permisos.GetAcciones(this.RollData[0].IdRoll, '1').subscribe(
       (res : any) => {
-        console.log({data : res})
         if(res.status == true){
           this.Acciones = res.acciones;
 
@@ -526,23 +526,63 @@ export class ExamenesComponent implements OnInit {
 
   async DownloadExam( Data : any ){
 
+
     await this.servicesExamen.getFiles(Data.IdExamen).subscribe(
       async ( res : any ) => {
+ 
+        this.AdjuntosGet        = res.adjuntos;
+        this.DataExamenAdjuntos = res.examen;
+ 
 
-        this.AdjuntosGet = res.adjuntos;
         let NameExamen   = this.ExamenSelected + '_' + Data.paciente
         var c            = 0;
 
-        var doc          = new jsPDF('p', 'pt', 'a4');
+        var doc          = new jsPDF('p', 'pt', 'a4', true);
         var Adjunto      = this.AdjuntosGet;
 
         var pageSize     = doc.internal.pageSize;
         var pageHeight   = pageSize.height ? pageSize.height : pageSize.getHeight();
         var pageWidth    = 7; //pageSize.width ? pageSize.width : pageSize.getWidth();
 
+        let costo        = String(this.DataExamenAdjuntos.costo_examen);
+        let documento    = String(this.DataExamenAdjuntos.dni_paciente)
+
         doc.setFontSize(11);
         doc.setTextColor(134,142,150);
-        doc.text(this.ExamenSelected + ' ' + Data.paciente,  50,90);
+        doc.text( this.ExamenSelected + ' ' + Data.paciente,  50,70);
+       
+        doc.text( ' Tipo Examen : ',   50,90);
+        doc.text( this.ExamenSelected,  140,90);
+
+        doc.text( ' Fecha Inicio : ' ,  50,110);
+        doc.text( this.DataExamenAdjuntos.fecha_inicio,  140,110);
+
+        doc.text( ' Fecha Fin : '    ,  50,130);
+        doc.text( this.DataExamenAdjuntos.fecha_fin,  140,130);
+
+        doc.text( ' Clinica : ' ,  50,150);
+        doc.text( this.DataExamenAdjuntos.clinica,  140,150);
+        
+        doc.text( ' Costo   : ',  50,170);
+        doc.text( costo,  140,170);
+
+        doc.text( ' Medico  : ',  50,190);
+        doc.text( this.DataExamenAdjuntos.medico,  140,190);
+
+        doc.text( ' Tecnico   : ' ,  50,210);
+        doc.text( this.DataExamenAdjuntos.tecnico,  140,210);
+
+        doc.text( ' Paciente   : ',  50,230);
+        doc.text( this.DataExamenAdjuntos.paciente,  140,230);
+
+        doc.text( ' Correo Paciente   : ',  50,250);
+        doc.text( this.DataExamenAdjuntos.correo_paciente,  150,250);
+
+        doc.text( ' Documento Paciente   : ',  50,270);
+        doc.text( documento,  180, 270);
+        doc.setPage(1)
+
+ 
 
             var Examen    = this.ExamenSelected.replace(/ /g, "_");
             await Adjunto.forEach( async ( element : any, key : any ) => {
@@ -564,36 +604,15 @@ export class ExamenesComponent implements OnInit {
                   img.onerror = reject;
                   let imgData = `<img [src]="${pathe}"/>`;
                   let terminacion = String(Terminacion[1]);
-                  // console.log(img);
+                  
                   doc.addPage();
+                  doc.setPage(key)
+
                   // //doc.addImage(image, terminacion, 5, 5, 0, 0);
                   //doc.addImage( img, , pageWidth - 50, 30, 14, 14, Nombre );
                   doc.addImage( imgData, terminacion, 5, 5, 0, 0);
                 });
-
-                //let image = await this.addImageProcess(pathe);
-
-                // doc.addPage();
-                // //doc.addImage(image, Terminacion[1], 5, 5, 0, 0);
-                // doc.addImage( image, Terminacion[1], pageWidth - 50, 30, 14, 14, Nombre );
-                // if (key !== Adjunto.length - 1) {
-                //   doc.addPage();
-                // } 
-                // const reader   = new FileReader();
-                // reader.onload  = (e: any) => {
-                // const image    = new Image();
-                // image.src      = pathe;
-                // image.onload   = rs => {
-        
-                //   // Return Base64 Data URL
-                //   let imgBase64Path = pathe;
-                //   doc.addPage();
-                //   doc.addImage( imgBase64Path, Terminacion[1], pageWidth - 50, 30, 14, 14, Nombre );
-
-                //   };
-                // };
-
-              
+ 
 
                 // }/// FINISH DATA
           });

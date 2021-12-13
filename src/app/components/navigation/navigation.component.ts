@@ -118,8 +118,8 @@ export class NavigationComponent implements OnInit {
   signOut() {
     this.auth.setAuthState(false);
     this.token.removeToken();
-    window.location.href = 'home';
-    this.router.navigate(['home']);
+    window.location.href = 'login';
+    this.router.navigate(['login']);
 
   }
 

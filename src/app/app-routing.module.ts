@@ -23,15 +23,18 @@ const routes: Routes = [
 
   { path: '',           redirectTo: '/login', pathMatch: 'full' },
   { path: '*',          redirectTo: '/login', pathMatch: 'full' },
-  { path: 'home',          redirectTo: '/login', pathMatch: 'full' },
+  //{ path: 'home',          redirectTo: '/login', pathMatch: 'full' },
 
   { path: 'products',   redirectTo: '/home-index', pathMatch: 'full' },
 
   { path: 'home-index', component: IndexHomeComponent },
   //{ path: 'home',       component: HomeComponent },
   { path: 'profile',    component: UserProfileComponent },
+
   { path: 'register',   component: SignupComponent },
   { path: 'login',      component: SigninComponent },
+  { path: 'home',      component: SigninComponent },
+
   { path: 'categories', component: CategoryComponent },
 
 
