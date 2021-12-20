@@ -116,6 +116,7 @@ export class NavigationComponent implements OnInit {
  
    // Signout
   signOut() {
+    window.addEventListener("beforeunload", () => localStorage.removeItem('isAuth'));
     this.auth.setAuthState(false);
     this.token.removeToken();
     window.location.href = 'login';
@@ -124,11 +125,11 @@ export class NavigationComponent implements OnInit {
   }
 
   GetUsers(){
-    this.userService.GetUsuarios( this.DataSearchUsers, '2' ).subscribe(
-      ( res : any ) => {
+    // this.userService.GetUsuarios( this.DataSearchUsers, '2' ).subscribe(
+    //   ( res : any ) => {
 
-      }
-    )
+    //   }
+    // )
   }
 
   
