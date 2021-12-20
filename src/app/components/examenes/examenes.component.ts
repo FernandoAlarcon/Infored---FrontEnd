@@ -1,8 +1,10 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import {HttpEventType, HttpErrorResponse, HttpResponse} from '@angular/common/http';
-import { ActivatedRoute } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
 
+
+import { HttpHeaders ,HttpEventType, HttpErrorResponse, HttpResponse} from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
+import { ToastrService } from 'ngx-toastr'; 
+//import  domtoimage from 'dom-to-image';
 
 import { TokenService } from '../../shared/token.service';
 import { AuthService } from 'src/app/shared/auth.service';
@@ -21,9 +23,8 @@ import { GLOBAL } from '../../services/global';
 import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
 
 //// PDF LIBRARIES
-  
 import { of, Observable } from 'rxjs';
-import {catchError, map} from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 
 // import * as jsPDF from 'jspdf';
 // import * as html2canvas from 'html2canvas';
@@ -39,6 +40,10 @@ import { FormGroup, FormControl, Validators} from '@angular/forms';
 
 //// END PDF LIBRARIES
 
+class ImageSnippet {
+  constructor(public src: string, public file: File) {}
+}
+
 export class User {
   id    : any = 0;
   name  : String = '';
@@ -52,6 +57,8 @@ export class User {
 })
 
 export class ExamenesComponent implements OnInit {
+
+  selectedFile : ImageSnippet | undefined;
 
   global : any = GLOBAL;
   isSignedIn   : boolean | undefined;
@@ -246,15 +253,39 @@ export class ExamenesComponent implements OnInit {
 
     for ( i = 0; i < this.selectedFiles.length; i++) {
       this.upload( i, this.selectedFiles[i] );
+      this.processFile( this.selectedFiles[i] );
     }
 
   }///// uploadFiles
+
+  processFile(imageInput: any) {
+    
+    
+    const file: File = imageInput.files[0];
+    const reader = new FileReader();
+
+    reader.addEventListener('load', (event: any) => {
+
+      this.selectedFile = new ImageSnippet(event.target.result, file);
+
+      this.servicesExamen.uploadImage(this.selectedFile.file).subscribe(
+        (res : any) => {
+        
+        },
+        (err : any ) => {
+        
+        })
+    });
+
+    reader.readAsDataURL(file);
+  }
 
   upload( index : any , file : any ) {
 
     this.DataValue.value     =  0;
     this.DataValue.fileName  = file.name;
     this.progressInfo[index] = this.DataValue;
+    
 
     this.servicesExamen.upload( file, this.IdAdjuntos, this.ExamenSelected ).subscribe(
       ( event : any ) => {
@@ -591,9 +622,19 @@ export class ExamenesComponent implements OnInit {
                 var foto          = element.adjunto;
                 var Terminacion   = foto.split(".");
                 var Nombre        = key+Terminacion[0];
+                let terminacion   = String(Terminacion[1]);
+
                 var pathe         = this.global.UrlLocalTest + "/adjuntos/examenes/" + element.adjunto;
 
+                //var imgData = 'data:image/jpeg;base64,'+ this.sanitizer.bypassSecurityTrustResourceUrl(pathe);
+                
+
                 let image = new Promise((resolve, reject) => {
+
+                  const headers = new HttpHeaders();
+                  headers.append('Content-Type', 'multipart/form-data');
+                  headers.append('Accept', 'application/json');
+                  
                   var img = new Image(),
                   canvas = document.createElement("canvas"),
                   ctx    = canvas.getContext("2d"),
@@ -603,14 +644,14 @@ export class ExamenesComponent implements OnInit {
                   
                   img.onerror = reject;
                   let imgData = `<img [src]="${pathe}"/>`;
-                  let terminacion = String(Terminacion[1]);
                   
+                  doc.addImage(img, terminacion, 15, 40, 180, 160);
                   doc.addPage();
                   doc.setPage(key)
 
                   // //doc.addImage(image, terminacion, 5, 5, 0, 0);
                   //doc.addImage( img, , pageWidth - 50, 30, 14, 14, Nombre );
-                  doc.addImage( imgData, terminacion, 5, 5, 0, 0);
+                  doc.addImage( pathe, 'jpg', 10, 78, 12, 15);
                 });
  
 
@@ -629,7 +670,7 @@ export class ExamenesComponent implements OnInit {
       this.ExamenesGetData = [];   
       this.CharguerData    = false;
 
-      await this.servicesExamen.ListDataExamen(this.idExamenSelected, this.SearchDataExamen, '1').subscribe(
+      await this.servicesExamen.ListDataExamen(this.UserProfile?.id, this.RollData[0].Roll, '1', this.SearchDataExamen, this.idExamenSelected).subscribe(
           ( res : any ) => {
 
             this.CharguerData     = true;
@@ -637,6 +678,14 @@ export class ExamenesComponent implements OnInit {
 
           }
       )
+
+      // await this.servicesExamen.GetExamenes(this.UserProfile?.id, this.RollData[0].Roll, '2', this.SearchExamens, this.idExamenSelected, this.pagination1.current_page).subscribe(
+      //   ( res : any ) => {
+
+      //       this.DataInfoExamenes  = res.examenes.data;  
+      //       this.pagination1       = res.pagination;
+      //   }
+      // )
   }
 
   async DataListExamen(){

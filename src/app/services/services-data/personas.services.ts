@@ -12,7 +12,11 @@ export class Personas {
   
     constructor( private http: HttpClient ) {} 
 
-    GetPersonas(data : Object, mood: Object):Observable<any>{
+    GetPersonas(data : Object, mood: Object, page : any):Observable<any>{
+        return this.http.get(`${GLOBAL.UrlLocalTest}/api/personas?mood=${mood}&data=${data}&page=${page}`);
+    }
+
+    GetPersonasData(data : Object, mood: Object):Observable<any>{
         return this.http.get(`${GLOBAL.UrlLocalTest}/api/personas?mood=${mood}&data=${data}`);
     }
 

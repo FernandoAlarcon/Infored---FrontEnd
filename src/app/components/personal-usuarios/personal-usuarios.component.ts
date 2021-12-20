@@ -13,6 +13,7 @@ import { Personas } from '../../services/services-data/personas.services'
 import { Ubicaciones } from '../../services/services-data/ubicaciones.services'
 import { RollServices } from '../../services/services-data/roles-permisos.service';
 import { isThisQuarter } from 'date-fns';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 
 
@@ -34,7 +35,11 @@ export class PersonalUsuariosComponent implements OnInit {
   UserProfile  : User    | undefined;
   
   SelectRoll    : string = '';
-  
+  SearchUsers   : string = '';
+    
+  //PAGINACION
+  pagination1   : any = [];
+
   PermisosData  : any = []; 
   StateArrow    : any = false; 
 
@@ -121,19 +126,23 @@ export class PersonalUsuariosComponent implements OnInit {
 
     async GetUsuarios(){
 
-      await this.servicePersonas.GetPersonas( this.RollSearch, '2').subscribe(
+      await this.servicePersonas.GetPersonas( this.RollSearch, '2', this.pagination1.current_page).subscribe(
         ( res : any ) => {
-          this.PersonasUsers = res.personas
-        }
-      )
 
-      await this.servicePersonas.GetPersonas( '', '3').subscribe(
+          this.PersonasUsers = res.personas.data;
+          this.pagination1   = res.pagination;
+
+        }
+      )/// FINISH GetUsuarios
+    }
+
+    async GetPersons(){
+      await this.servicePersonas.GetPersonasData( '', '3').subscribe(
         ( res : any ) => {
           this.Personas = res.personas
         }
       )
-
-    }
+    }/// FINISH GetPersons
 
     async GetRoles(){
       await this.servicesSeveral.GetRoles().subscribe(
@@ -185,6 +194,7 @@ export class PersonalUsuariosComponent implements OnInit {
             if( res.status == true ){
               this.toastr.success('Registro Actualizado');  
               this.GetUsuarios();
+              this.GetPersons();
             }
           }
         )
@@ -221,8 +231,9 @@ export class PersonalUsuariosComponent implements OnInit {
             }
 
             if( res.status == true ){
-             this.GetUsuarios(); 
- 
+              this.GetUsuarios(); 
+              this.GetPersons();
+              
               this.toastr.success('Usuario creado'); 
 
 
@@ -247,4 +258,8 @@ export class PersonalUsuariosComponent implements OnInit {
 
     }
 
+    async changePage1(page: number){
+      this.pagination1.current_page = page;
+      await this.GetUsuarios();
+    }//// FINISH changePage1
 }
